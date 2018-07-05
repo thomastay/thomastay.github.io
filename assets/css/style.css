@@ -46,8 +46,10 @@ p {
 }
 
 p.licence-sm {
-    font-size: 10px;
+    font-size: 9px;
     margin-bottom: 0px;
+    margin-top: 5px;
+    line-height: 9px;
 }
 
 html,
