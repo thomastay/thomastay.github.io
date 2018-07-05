@@ -45,6 +45,11 @@ p {
 	margin-top: 10px; 
 }
 
+p.licence-sm {
+    font-size: 10px;
+    margin-bottom: 0px;
+}
+
 html,
 body {
 	height: 100%;
