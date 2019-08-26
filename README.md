@@ -1,1 +1,2 @@
-# thomastay.github.io
+# My personal website
+[Link to website](https://ttay.me)
