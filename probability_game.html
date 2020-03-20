@@ -90,6 +90,14 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <style>
+      p.text-body {
+          font-size:24px;
+      }
+      p.text-footer {
+          font-size:14px;
+      }
+    </style>
 
     <title>Probability Game</title>
   </head>
@@ -150,8 +158,8 @@
       </div>
       <div class="row" style="margin-bottom:1in">
         <div class="col-lg"> 
-          <p> If you see red, which color do you think is on the underside?  </p>
-          <p> Let's run an experiment to find out. The buttons below run 1/100/10,000
+          <p class="text-body"> If you see red, which color do you think is on the underside?  </p>
+          <p class="text-body"> Let's run an experiment to find out. The buttons below run 1/100/10,000
           runs of this game and prints the probabilities in the table on the
           right</p>
         </div>
@@ -227,9 +235,9 @@
 
     <footer class="footer" style="margin-top:1in">
       <div class="container">
-      <p> Like this? Visit my website: <a
+      <p class=text-footer"> Like this? Visit my website: <a
             href="https://ttay.me">ttay.me</a></p>
-      <p> Made with <a href=https://vanilla-js.com>VanillaJS</a>, and 
+      <p class=text-footer"> Made with <a href=https://vanilla-js.com>VanillaJS</a>, and 
       <a href="https://getbootstrap.com/">Bootstrap CSS</a></p>
       </div>
     </footer>
