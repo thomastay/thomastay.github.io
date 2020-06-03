@@ -47,7 +47,7 @@ For those unaware, F# is a functional-first language that runs on the .NET platf
   <meta property="og:locale" content="en-us" />
 
 
-  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/bundle-page.min.css">
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
   <link rel="stylesheet" href="/blog/css/index.min.css">
   <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
     title="Thomas Tay&#39;s blog">
@@ -142,64 +142,64 @@ F 2
 <li>Adjacency lists (Map from string to Set&lt;string&gt;) got changed to a 2D adjacency matrix of bools</li>
 <li>The cost Map, which used to be a Map from string to string, got changed to a Dictionary from int to int[]. Note that ChildNodes is an alias for int[], I did this so I could change the implementation of ChildNodes without rewriting a lot of code.</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#75715e">// old code
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Digraph</span> <span style="color:#f92672">=</span>
-    <span style="color:#f92672">{</span>nodes<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#66d9ef">list</span><span style="color:#f92672">;</span>
-    adjacency<span style="color:#f92672">:</span> Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span> Set<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;;}</span>
-
-<span style="color:#75715e">// Note: graph is a Digraph in this function,
-</span><span style="color:#75715e">// because this function is actually a closure
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> countNumChildren node <span style="color:#f92672">(</span>costMap<span style="color:#f92672">:</span> Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span> Set<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;)</span> <span style="color:#f92672">=</span>
-    <span style="color:#66d9ef">let</span> mutable costMap <span style="color:#f92672">=</span> costMap
-    <span style="color:#66d9ef">let</span> rec dfs node <span style="color:#f92672">=</span>
-        <span style="color:#66d9ef">match</span> Map.tryFind node costMap <span style="color:#66d9ef">with</span>
-        <span style="color:#f92672">|</span> Some <span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> s
-        <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span>
-            <span style="color:#66d9ef">match</span> Map.tryFind node graph<span style="color:#f92672">.</span>adjacency <span style="color:#66d9ef">with</span>
-            <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span>
-                <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span> Set.add node Set.empty
-                costMap <span style="color:#f92672">&lt;-</span> Map.add node s costMap
-                s
-            <span style="color:#f92672">|</span> Some<span style="color:#f92672">(</span>lst<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
-                <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span>
-                    lst
-                    <span style="color:#f92672">|&gt;</span> List.map dfs
-                    <span style="color:#f92672">|&gt;</span> List.reduce <span style="color:#f92672">(</span>Set.union<span style="color:#f92672">)</span>
-                    <span style="color:#f92672">|&gt;</span> Set.add node
-                costMap <span style="color:#f92672">&lt;-</span> Map.add node s costMap
-                s
-    dfs node <span style="color:#f92672">|&gt;</span> ignore
-    costMap
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#75715e">// New code - uses Dictionaries and 2D arrays
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Digraph</span> <span style="color:#f92672">=</span>
-    <span style="color:#f92672">{</span>size<span style="color:#f92672">:</span> int<span style="color:#f92672">;</span>
-    labels<span style="color:#f92672">:</span> Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span> int<span style="color:#f92672">&gt;;</span>
-    adjacency<span style="color:#f92672">:</span> <span style="color:#66d9ef">bool</span><span style="color:#f92672">[,];</span>
-    costMap<span style="color:#f92672">:</span> Dictionary<span style="color:#f92672">&lt;</span>int<span style="color:#f92672">,</span> ChildNodes<span style="color:#f92672">&gt;}</span>
-
-<span style="color:#66d9ef">let</span> costOfModules <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-    <span style="color:#66d9ef">let</span> rec dfs <span style="color:#f92672">(</span>node<span style="color:#f92672">:</span> int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-        <span style="color:#66d9ef">let</span> found<span style="color:#f92672">,</span> value <span style="color:#f92672">=</span> graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>TryGetValue node
-        <span style="color:#66d9ef">if</span> found <span style="color:#66d9ef">then</span> value <span style="color:#66d9ef">else</span>
-            <span style="color:#66d9ef">let</span> adj <span style="color:#f92672">=</span> genAdj graph<span style="color:#f92672">.</span>adjacency node
-            <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span> ChildNodes.init node
-            <span style="color:#66d9ef">match</span> adj<span style="color:#f92672">.</span>Length <span style="color:#66d9ef">with</span>
-            <span style="color:#f92672">|</span> 0 <span style="color:#f92672">-&gt;</span>
-                <span style="color:#75715e">// Node is a leaf, so add itself to costMap
-</span><span style="color:#75715e"></span>                graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span>node<span style="color:#f92672">,</span> s<span style="color:#f92672">)</span>
-                s
-            <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span>
-                <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span>
-                    adj
-                    <span style="color:#f92672">|&gt;</span> Array.map dfs
-                    <span style="color:#f92672">|&gt;</span> Array.append <span style="color:#f92672">[|</span>s<span style="color:#f92672">|]</span>
-                    <span style="color:#f92672">|&gt;</span> ChildNodes.build
-                graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span>node<span style="color:#f92672">,</span> s<span style="color:#f92672">)</span>
-                s
-    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>graph<span style="color:#f92672">.</span>size<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
-        <span style="color:#66d9ef">let</span> found <span style="color:#f92672">=</span> graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>ContainsKey i
-        <span style="color:#66d9ef">if</span> found <span style="color:#66d9ef">then</span> () <span style="color:#66d9ef">else</span> dfs i <span style="color:#f92672">|&gt;</span> ignore
-    graph
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">// old code
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Digraph</span> <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>    <span style="color:#f92672">{</span>nodes<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#66d9ef">list</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    adjacency<span style="color:#f92672">:</span> Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span> Set<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;;}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e">// Note: graph is a Digraph in this function,
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#75715e">// because this function is actually a closure
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> countNumChildren node <span style="color:#f92672">(</span>costMap<span style="color:#f92672">:</span> Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span> Set<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;)</span> <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    <span style="color:#66d9ef">let</span> mutable costMap <span style="color:#f92672">=</span> costMap
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    <span style="color:#66d9ef">let</span> rec dfs node <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        <span style="color:#66d9ef">match</span> Map.tryFind node costMap <span style="color:#66d9ef">with</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>        <span style="color:#f92672">|</span> Some <span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> s
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>            <span style="color:#66d9ef">match</span> Map.tryFind node graph<span style="color:#f92672">.</span>adjacency <span style="color:#66d9ef">with</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>            <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>                <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span> Set.add node Set.empty
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>                costMap <span style="color:#f92672">&lt;-</span> Map.add node s costMap
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>                s
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>            <span style="color:#f92672">|</span> Some<span style="color:#f92672">(</span>lst<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>                <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>                    lst
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>                    <span style="color:#f92672">|&gt;</span> List.map dfs
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>                    <span style="color:#f92672">|&gt;</span> List.reduce <span style="color:#f92672">(</span>Set.union<span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>                    <span style="color:#f92672">|&gt;</span> Set.add node
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>                costMap <span style="color:#f92672">&lt;-</span> Map.add node s costMap
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>                s
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    dfs node <span style="color:#f92672">|&gt;</span> ignore
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>    costMap
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">// New code - uses Dictionaries and 2D arrays
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Digraph</span> <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>    <span style="color:#f92672">{</span>size<span style="color:#f92672">:</span> int<span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    labels<span style="color:#f92672">:</span> Map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span> int<span style="color:#f92672">&gt;;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    adjacency<span style="color:#f92672">:</span> <span style="color:#66d9ef">bool</span><span style="color:#f92672">[,];</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    costMap<span style="color:#f92672">:</span> Dictionary<span style="color:#f92672">&lt;</span>int<span style="color:#f92672">,</span> ChildNodes<span style="color:#f92672">&gt;}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#66d9ef">let</span> costOfModules <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    <span style="color:#66d9ef">let</span> rec dfs <span style="color:#f92672">(</span>node<span style="color:#f92672">:</span> int<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        <span style="color:#66d9ef">let</span> found<span style="color:#f92672">,</span> value <span style="color:#f92672">=</span> graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>TryGetValue node
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        <span style="color:#66d9ef">if</span> found <span style="color:#66d9ef">then</span> value <span style="color:#66d9ef">else</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>            <span style="color:#66d9ef">let</span> adj <span style="color:#f92672">=</span> genAdj graph<span style="color:#f92672">.</span>adjacency node
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>            <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span> ChildNodes.init node
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>            <span style="color:#66d9ef">match</span> adj<span style="color:#f92672">.</span>Length <span style="color:#66d9ef">with</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>            <span style="color:#f92672">|</span> 0 <span style="color:#f92672">-&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>                <span style="color:#75715e">// Node is a leaf, so add itself to costMap
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#75715e"></span>                graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span>node<span style="color:#f92672">,</span> s<span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>                s
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>            <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>                <span style="color:#66d9ef">let</span> s <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>                    adj
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>                    <span style="color:#f92672">|&gt;</span> Array.map dfs
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>                    <span style="color:#f92672">|&gt;</span> Array.append <span style="color:#f92672">[|</span>s<span style="color:#f92672">|]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>                    <span style="color:#f92672">|&gt;</span> ChildNodes.build
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>                graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>Add<span style="color:#f92672">(</span>node<span style="color:#f92672">,</span> s<span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>                s
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>graph<span style="color:#f92672">.</span>size<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>        <span style="color:#66d9ef">let</span> found <span style="color:#f92672">=</span> graph<span style="color:#f92672">.</span>costMap<span style="color:#f92672">.</span>ContainsKey i
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>        <span style="color:#66d9ef">if</span> found <span style="color:#66d9ef">then</span> () <span style="color:#66d9ef">else</span> dfs i <span style="color:#f92672">|&gt;</span> ignore
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>    graph
 </code></pre></div><p>If you&rsquo;ve been following closely, then you&rsquo;ll notice one change which I didn&rsquo;t mention yet. How come the Maps used to go from string to string, but now go from int to int[]?</p>
 <p>That leads me to my second major perf improvement - <strong>Not using strings</strong>. Strings are basically blobs of memory that have to be yanked out from all over the heap, that the GC has to care about, and they have to be hashed (that takes time!) If you can avoid using strings, then don&rsquo;t.</p>
 <p>In my application, I was using strings as the names of each of the nodes in the graph, and I changed every use of a string to an int. Now, the strings as names for the nodes still had to be kept around, since I needed to print the nodes at the end, so I simply kept a Map called &ldquo;labels&rdquo; around that would let me know which strings corresponded to which ints.</p>
@@ -208,12 +208,12 @@ F 2
 <h2 id="efficiency-with-algorithms">Efficiency with Algorithms</h2>
 <p>Now at this point I had spent about three days writing the improved code, and I was feeling really good. All that stuff about exploiting cache efficiency was paying off, and I felt that I could get it under a second by Monday. The next step, though, wasn&rsquo;t so easy. The bottleneck proved to be calculating the set of child nodes under each parent.</p>
 <p>Right now, I was storing each set of child nodes as an int[]. To calculate the set of all nodes under a particular <em>parent</em> node, I would recursively compute the set of all nodes under each of the <em>parent</em>&lsquo;s children, then use a HashSet to merge them together. Repeated efforts to improve the code proved futile, shaving only milliseconds off.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">module</span> ChildNodes <span style="color:#f92672">=</span> 
-    <span style="color:#66d9ef">let</span> build <span style="color:#f92672">(</span>lst<span style="color:#f92672">:</span> int[][]<span style="color:#f92672">):</span> int[] <span style="color:#f92672">=</span>
-        <span style="color:#66d9ef">let</span> d <span style="color:#f92672">=</span> HashSet()
-        <span style="color:#66d9ef">for</span> s <span style="color:#66d9ef">in</span> lst <span style="color:#66d9ef">do</span>
-            d<span style="color:#f92672">.</span>UnionWith s
-        d <span style="color:#f92672">|&gt;</span> Seq.toArray
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">module</span> ChildNodes <span style="color:#f92672">=</span> 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>    <span style="color:#66d9ef">let</span> build <span style="color:#f92672">(</span>lst<span style="color:#f92672">:</span> int[][]<span style="color:#f92672">):</span> int[] <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>        <span style="color:#66d9ef">let</span> d <span style="color:#f92672">=</span> HashSet()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>        <span style="color:#66d9ef">for</span> s <span style="color:#66d9ef">in</span> lst <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>            d<span style="color:#f92672">.</span>UnionWith s
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>        d <span style="color:#f92672">|&gt;</span> Seq.toArray
 </code></pre></div><p>Now what? Well, after some testing, I noticed a big problem. <strong>Most edges in the graph are useless</strong>. To show you what I mean, let&rsquo;s take a very simple example of a graph, where A depends on B, which depends on C.</p>
 <pre><code>A &lt;- B &lt;- C
 // represented as:
@@ -229,42 +229,42 @@ C
 <p>If you&rsquo;ve taken a Discrete Mathematics class (spoiler: I used to teach one), you&rsquo;ll know that there exists an O(n^3) algorithm for computing Transitive Closures, called <a href="https://cs.winona.edu/lin/cs440/ch08-2.pdf">Warshall&rsquo;s algorithm</a>. I won&rsquo;t go too much into depth as the linked PDF explains it well.</p>
 <p>Instead, we&rsquo;re going to use a much lesser known algorithm called <a href="http://www.sciencedirect.com/science/article/pii/0167642389900397/pdf?md5=478ed0e9fa69b427f947fd2bd864b463&amp;pid=1-s2.0-0167642389900397-main.pdf&amp;_valck=1">Gries&rsquo; algorithm</a>[1] to compute the transitive reduction of a graph. It basically runs Warshall&rsquo;s algorithm in reverse, removing transitive edges from the graph as it finds them. Again, read the paper for more details.</p>
 <p>Here is my implementation of Gries&rsquo; algorithm:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#75715e">// Implements the transitve reduction algorithm
-</span><span style="color:#75715e">// minor perf improvements have been made
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> reduce <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">):</span> Digraph <span style="color:#f92672">=</span>
-    <span style="color:#66d9ef">let</span> adj <span style="color:#f92672">=</span> graph<span style="color:#f92672">.</span>adjacency
-    <span style="color:#66d9ef">let</span> n <span style="color:#f92672">=</span> Array2D.length1 adj
-    <span style="color:#66d9ef">for</span> k <span style="color:#f92672">=</span> n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">downto</span> 0 <span style="color:#66d9ef">do</span>
-        Parallel.For<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> n<span style="color:#f92672">,</span>
-            <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> i <span style="color:#f92672">-&gt;</span>
-                <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> k<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
-                    <span style="color:#66d9ef">for</span> j <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
-                        <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>k<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
-                            adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">false</span>
-            <span style="color:#f92672">)</span>
-        <span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> ignore
-    graph
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">// Implements the transitve reduction algorithm
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e">// minor perf improvements have been made
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> reduce <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">):</span> Digraph <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    <span style="color:#66d9ef">let</span> adj <span style="color:#f92672">=</span> graph<span style="color:#f92672">.</span>adjacency
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    <span style="color:#66d9ef">let</span> n <span style="color:#f92672">=</span> Array2D.length1 adj
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#66d9ef">for</span> k <span style="color:#f92672">=</span> n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">downto</span> 0 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        Parallel.For<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> n<span style="color:#f92672">,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>            <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> i <span style="color:#f92672">-&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>                <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> k<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>                    <span style="color:#66d9ef">for</span> j <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>                        <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>k<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>                            adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">false</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>            <span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>        <span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> ignore
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>    graph
 </code></pre></div><p>A few words on this algorithm. When I first implemented it <em>as-is</em> from the paper, I found that the total runtime shot up from 5.5s to <strong>12s</strong>! That was really disheartening, since I was sure that implementing a better algorithm was the key to speeding this algorithm up.</p>
 <p>Nonetheless, with a few performance improvements, I managed to get the program to run at <strong>1.4s</strong>, another order of magnitude improvement! Firstly, I implemented the middle loop as a parallel for loop, which helped to speed things up a little[2].</p>
 <p>But the main improvement came by avoiding work (<em>again</em>). Notice that I do an <strong>if true</strong> check on adj.[i,k] before I run the innermost loop. If that is false, we skip a whole inner loop of work. That&rsquo;s <strong>2000</strong> iterations saved - No wonder the speed up was an order of magnitude!</p>
 <p>Compare the contrast to the old version (some omissions):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> reduceOld <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">):</span> Digraph <span style="color:#f92672">=</span>
-    <span style="color:#66d9ef">for</span> k <span style="color:#f92672">=</span> n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">downto</span> 0 <span style="color:#66d9ef">do</span>
-        <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
-            <span style="color:#66d9ef">for</span> j <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
-                <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> k<span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> adj<span style="color:#f92672">.[</span>k<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
-                    adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">false</span>
-
-<span style="color:#66d9ef">let</span> reduce <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">):</span> Digraph <span style="color:#f92672">=</span>
-    <span style="color:#66d9ef">for</span> k <span style="color:#f92672">=</span> n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">downto</span> 0 <span style="color:#66d9ef">do</span>
-        Parallel.For<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> n<span style="color:#f92672">,</span>
-            <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> i <span style="color:#f92672">-&gt;</span>
-                <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> k<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
-                    <span style="color:#66d9ef">for</span> j <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
-                        <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>k<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
-                            adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">false</span>
-            <span style="color:#f92672">)</span>
-        <span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> ignore
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">let</span> reduceOld <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">):</span> Digraph <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>    <span style="color:#66d9ef">for</span> k <span style="color:#f92672">=</span> n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">downto</span> 0 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>        <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>            <span style="color:#66d9ef">for</span> j <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>                <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> k<span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> adj<span style="color:#f92672">.[</span>k<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>                    adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">false</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#66d9ef">let</span> reduce <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">):</span> Digraph <span style="color:#f92672">=</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    <span style="color:#66d9ef">for</span> k <span style="color:#f92672">=</span> n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">downto</span> 0 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        Parallel.For<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> n<span style="color:#f92672">,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>            <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> i <span style="color:#f92672">-&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>                <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> k<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>                    <span style="color:#66d9ef">for</span> j <span style="color:#66d9ef">in</span> 0<span style="color:#f92672">..</span>n<span style="color:#f92672">-</span>1 <span style="color:#66d9ef">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>                        <span style="color:#66d9ef">if</span> adj<span style="color:#f92672">.[</span>k<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#66d9ef">then</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>                            adj<span style="color:#f92672">.[</span>i<span style="color:#f92672">,</span> j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">false</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>            <span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        <span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> ignore
 </code></pre></div><h2 id="the-proof-in-the-pudding-aka-the-code">The proof in the pudding (aka the code)</h2>
 <p>If you want to see the code, here&rsquo;s a link to the Github repo: <a href="https://github.com/thomastay/expensive_modules">Link to Github Repo</a></p>
 <h2 id="squeezing-the-last-drop-of-performance">Squeezing the last drop of performance</h2>
@@ -334,11 +334,11 @@ Phew! These are the details one has to worry about when performing lock-free rea
     </div>
   </article>
 
-  <script src="/blog/js/highlight.pack.js"></script>
+  
 
 
 <script>
-  hljs.initHighlightingOnLoad();
+  
   
   
   
