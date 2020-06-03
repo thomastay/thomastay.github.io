@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.71.0" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://ttay.me/blog/optimizing_graph_algo_fsharp/" />
+  <link rel="canonical" href="https://ttay.me/blog/optimizing_graph_algo_fsharp/" /><link rel="alternate" type="application/atom+xml" href="https://ttay.me/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/ttay.me\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "Lessons learnt from optimizing a graph algorithm in F sharp",
+      "headline" : "Lessons learnt from optimizing a graph algorithm in F sharp",
+      "description" : "In this article I\x26rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! Spoiler alert: Use the right data structures, exploit cache efficiency, and do less work.\nFor those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don\x26rsquo;t understand a line of code in the article.",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2020",
+      "datePublished": "2020-06-02 22:12:51 -0600 -0600",
+      "dateModified" : "2020-06-02 22:12:51 -0600 -0600",
+      "url" : "https:\/\/ttay.me\/blog\/optimizing_graph_algo_fsharp\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>Lessons learnt from optimizing a graph algorithm in F sharp - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="Lessons learnt from optimizing a graph algorithm in F sharp - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! Spoiler alert: Use the right data structures, exploit cache efficiency, and do less work.
+For those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don&rsquo;t understand a line of code in the article." />
+  <meta name="description" content="In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! Spoiler alert: Use the right data structures, exploit cache efficiency, and do less work.
+For those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don&rsquo;t understand a line of code in the article." />
+  <meta property="og:locale" content="en-us" />
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css" />
+  <link rel="stylesheet" href="/blog/css/github-markdown.css" />
+  <link rel="stylesheet" href="/blog/css/highlight/tomorrow.min.css" />
+  <link rel="stylesheet" href="/blog/css/index.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">Lessons learnt from optimizing a graph algorithm in F sharp</h1>
+          
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from <strong>58s</strong> down to <strong>1.2s</strong>, nearly a 50x improvement! <em>Spoiler alert</em>: Use the right data structures, exploit <strong>cache</strong> efficiency, and <strong>do less work</strong>.</p>
+<p>For those unaware, F# is a <em>functional-first language that runs on the .NET platform (think C#)</em>. Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible <strong>even if</strong> you don&rsquo;t understand a line of code in the article.</p>
+<p><em>Why F#</em>? All significant optimizations come from <em>careful profiling</em> and <em>significant refactoring</em>, and F# has very good support for both. F#&lsquo;s strong type system makes refactoring safe, and Visual Studio integration makes profiling easy. Also, I love that I get highly tuned data structures via .NET to speed up my algorithms.</p>
+<p>Bear in mind that I am by no means an F# expert, so there may be better ways to optimize this code.</p>
+<h2 id="the-question">The question</h2>
+<p>As with all interview questions, they usually come with a good &lsquo;ol blurb which attempts to give some context to the horridly abstract question you&rsquo;re expected to comprehend. Here&rsquo;s my attempt at paraphrasing it (note that all this is original writing, nothing copied):</p>
+<p><strong>The question:</strong> Applications in 2020 typically have hundreds of dependencies, all of which need to be compiled. The downside is, changing one module might cause all the downstream modules to be recompiled. The task is as follows: given a set of 2000 modules, all of which depend on each other in some way, print the number of modules downstream of each module.</p>
+<p>The input will look like the following. In this representation, module A depends on B, E, and F. As a result, module A is downstream of module B (and E,F too).</p>
+<pre><code>A B E F
+B D
+C B D E
+D E
+E
+F D
+</code></pre><p>This corresponds to the following dependency graph:</p>
+<pre><code>            E
+            |
+            D
+           / \
+          B   F
+        /  \ /
+        C   A
+</code></pre><p>Notice that not all edges are drawn, in particular any transitive edges are not drawn. This will come in useful later.</p>
+<p>This program will produce the following output, corresponding to the number of downstream modules (including itself):</p>
+<pre><code>A 1
+B 3
+C 1
+D 5
+E 6
+F 2
+</code></pre><h2 id="the-original-solution">The original solution</h2>
+<p>The exact solution isn&rsquo;t super critical, so I won&rsquo;t go into too much depth (as well as not to spoil the fun for those new to the question). Basically, it involves building a Directed Acyclic Graph (DAG) out of the list of lists, and then running a Depth-First Search in order to identify the number of children under each node.</p>
+<p>Before a recursive call to the DFS on some node returns, it updates a shared hashtable, to indicate which children are under the node. For instance, in the tree:</p>
+<pre><code>            E
+            |
+            D
+           / \
+          B   F
+        /  \ /
+        C   A
+</code></pre><p>When the call to node B returns, the map will contain {B: {B, C, A}}.</p>
+<p>With this information, finding the child nodes under a node is as simple as calling the DFS on each child node, then merging the set of all its child nodes.</p>
+<p>When I first implemented this algorithm in F# a year back, it worked very well, but took 55s for a large dataset. And honestly, that was fine. It solved the problem! Problem solving is always the priority.</p>
+<p>But that&rsquo;s not enough for you, dear reader. You want to know how to squeeze that last drop of performance, and that&rsquo;s what the rest of this article is about.</p>
+<h2 id="performance-with-data-structures">Performance with Data Structures</h2>
+<p>As <a href="https://www.youtube.com/watch?v=fHNmRkzxHWs">Chandler Carruth</a> puts it, performance with data structures, efficiency with algorithms. The thing that made the most difference in my F# code was <strong>Data structures, Data structures, Data structures</strong>.</p>
+<p>When I first wrote my F# code, it was filled with Maps and Lists. Now, that was very good F# code: <em>idiomatic</em> and <em>easy to read</em>, but it also meant that it was <strong>really slow</strong>. As you may be aware, F# maps are implemented as Binary Trees, which means that insert and search are O(log n) time operations. The hot path of my application involved a lot of Map lookups, and so I changed the F# maps to .NET dictionaries, which have O(1) lookup time.</p>
+<p>Similarly, I changed F#&lsquo;s sets to HashSets, and changed the F#&lsquo;s lists (which are linked lists) to .NET arrays, which have much better cache locality. Since I was mostly looping over my lists, having them as arrays made them looping faster.</p>
+<p>Changing immutable collections to mutable ones for performance is not surprising in itself, but it&rsquo;s important to remember that mutablity makes the code harder to reason about.</p>
+<p>So, I kept the Maps and Lists around in the parsing section of the code, which my benchmarking showed only took less than half a second - recall that the merge step took almost a <em>full minute</em>!</p>
+<p>We&rsquo;ll get around to optimizing that later on, but as always, profile your code and only make life more complex if you have to.</p>
+<p>Here&rsquo;s a snippet to demonstrate what I mean. The old code is presented first, which uses F#&lsquo;s sets, maps and lists, and the new code is below.</p>
+<p>This does a Depth-First Search (DFS) to obtain the set of child nodes that are under each parent node. There&rsquo;s obviously a lot to explain in this code, which I won&rsquo;t go into, but here&rsquo;s a summary of the Data Structures changed:</p>
+<ul>
+<li>Adjacency lists (Map from string to Set&lt;string&gt;) got changed to a 2D adjacency matrix of bools</li>
+<li>The cost Map, which used to be a Map from string to string, got changed to a Dictionary from int to int[]. Note that ChildNodes is an alias for int[], I did this so I could change the implementation of ChildNodes without rewriting a lot of code.</li>
+</ul>
+<pre><code class="language-F#" data-lang="F#">// old code
+type Digraph =
+    {nodes: string list;
+    adjacency: Map&lt;string, Set&lt;string&gt;&gt;;}
+
+// Note: graph is a Digraph in this function,
+// because this function is actually a closure
+let countNumChildren node (costMap: Map&lt;string, Set&lt;string&gt;&gt;) =
+    let mutable costMap = costMap
+    let rec dfs node =
+        match Map.tryFind node costMap with
+        | Some (s) -&gt; s
+        | None -&gt;
+            match Map.tryFind node graph.adjacency with
+            | None -&gt;
+                let s = Set.add node Set.empty
+                costMap &lt;- Map.add node s costMap
+                s
+            | Some(lst) -&gt;
+                let s =
+                    lst
+                    |&gt; List.map dfs
+                    |&gt; List.reduce (Set.union)
+                    |&gt; Set.add node
+                costMap &lt;- Map.add node s costMap
+                s
+    dfs node |&gt; ignore
+    costMap
+</code></pre><pre><code class="language-F#" data-lang="F#">// New code - uses Dictionaries and 2D arrays
+type Digraph =
+    {size: int;
+    labels: Map&lt;string, int&gt;;
+    adjacency: bool[,];
+    costMap: Dictionary&lt;int, ChildNodes&gt;}
+
+let costOfModules (graph: Digraph) =
+    let rec dfs (node: int) =
+        let found, value = graph.costMap.TryGetValue node
+        if found then value else
+            let adj = genAdj graph.adjacency node
+            let s = ChildNodes.init node
+            match adj.Length with
+            | 0 -&gt;
+                // Node is a leaf, so add itself to costMap
+                graph.costMap.Add(node, s)
+                s
+            | _ -&gt;
+                let s =
+                    adj
+                    |&gt; Array.map dfs
+                    |&gt; Array.append [|s|]
+                    |&gt; ChildNodes.build
+                graph.costMap.Add(node, s)
+                s
+    for i in 0..graph.size-1 do
+        let found = graph.costMap.ContainsKey i
+        if found then () else dfs i |&gt; ignore
+    graph
+</code></pre><p>If you&rsquo;ve been following closely, then you&rsquo;ll notice one change which I didn&rsquo;t mention yet. How come the Maps used to go from string to string, but now go from int to int[]?</p>
+<p>That leads me to my second major perf improvement - <strong>Not using strings</strong>. Strings are basically blobs of memory that have to be yanked out from all over the heap, that the GC has to care about, and they have to be hashed (that takes time!) If you can avoid using strings, then don&rsquo;t.</p>
+<p>In my application, I was using strings as the names of each of the nodes in the graph, and I changed every use of a string to an int. Now, the strings as names for the nodes still had to be kept around, since I needed to print the nodes at the end, so I simply kept a Map called &ldquo;labels&rdquo; around that would let me know which strings corresponded to which ints.</p>
+<p>Notice that I kept this as an F# map, despite everything I said earlier, since it isn&rsquo;t involved in the performance critical sections. Remember, mutability means more work for the reader.</p>
+<p>With these two perf improvements, I was able to get my total time down from <em>58s</em> to <em>5.5s</em>, an <strong>10x</strong> improvement!</p>
+<h2 id="efficiency-with-algorithms">Efficiency with Algorithms</h2>
+<p>Now at this point I had spent about three days writing the improved code, and I was feeling really good. All that stuff about exploiting cache efficiency was paying off, and I felt that I could get it under a second by Monday. The next step, though, wasn&rsquo;t so easy. The bottleneck proved to be calculating the set of child nodes under each parent.</p>
+<p>Right now, I was storing each set of child nodes as an int[]. To calculate the set of all nodes under a particular <em>parent</em> node, I would recursively compute the set of all nodes under each of the <em>parent</em>&lsquo;s children, then use a HashSet to merge them together. Repeated efforts to improve the code proved futile, shaving only milliseconds off.</p>
+<pre><code class="language-F#" data-lang="F#">module ChildNodes = 
+    let build (lst: int[][]): int[] =
+        let d = HashSet()
+        for s in lst do
+            d.UnionWith s
+        d |&gt; Seq.toArray
+</code></pre><p>Now what? Well, after some testing, I noticed a big problem. <strong>Most edges in the graph are useless</strong>. To show you what I mean, let&rsquo;s take a very simple example of a graph, where A depends on B, which depends on C.</p>
+<pre><code>A &lt;- B &lt;- C
+// represented as:
+A B C
+B C
+C
+</code></pre><p>Looking at this graph, to calculate the nodes under C, it suffices to calculate the nodes under B. But under my current scheme, I would calculate the nodes under B <strong>and nodes under A</strong>, then merge those two together! Obviously, this is unnecessary work, since whatever is under A will also be under B.</p>
+<p>Let&rsquo;s take a more complex example to see this in action:</p>
+<p><img src="/blog/img/modules-graph.svg" alt="A drawing of a graph with multiple transitive edges"></p>
+<p>As you can see, in this graph there are many <strong>redundant edges</strong>, marked in red. In particular, we have something called <em>transitive redundancy</em>, i.e. if I can get from A to B in two or more steps, then I shouldn&rsquo;t have an edge from A to B at all!</p>
+<p>This problem is closely related to the problem of a <em>transitive closure</em>. In a transitive closure, we take some DAG and add in all the transitive edges. That is, if I can go from <em>A to B</em> and <em>B to C</em>, then I should also be able to go from <em>A to C</em>.</p>
+<p>We need to do what&rsquo;s called a Transitive Reduction, going in the opposite direction.</p>
+<p>If you&rsquo;ve taken a Discrete Mathematics class (spoiler: I used to teach one), you&rsquo;ll know that there exists an O(n^3) algorithm for computing Transitive Closures, called <a href="https://cs.winona.edu/lin/cs440/ch08-2.pdf">Warshall&rsquo;s algorithm</a>. I won&rsquo;t go too much into depth as the linked PDF explains it well.</p>
+<p>Instead, we&rsquo;re going to use a much lesser known algorithm called <a href="http://www.sciencedirect.com/science/article/pii/0167642389900397/pdf?md5=478ed0e9fa69b427f947fd2bd864b463&amp;pid=1-s2.0-0167642389900397-main.pdf&amp;_valck=1">Gries&rsquo; algorithm</a>[1] to compute the transitive reduction of a graph. It basically runs Warshall&rsquo;s algorithm in reverse, removing transitive edges from the graph as it finds them. Again, read the paper for more details.</p>
+<p>Here is my implementation of Gries&rsquo; algorithm:</p>
+<pre><code class="language-F#" data-lang="F#">// Implements the transitve reduction algorithm
+// minor perf improvements have been made
+let reduce (graph: Digraph): Digraph =
+    let adj = graph.adjacency
+    let n = Array2D.length1 adj
+    for k = n-1 downto 0 do
+        Parallel.For(0, n,
+            (fun i -&gt;
+                if adj.[i, k] then
+                    for j in 0..n-1 do
+                        if adj.[k, j] then
+                            adj.[i, j] &lt;- false
+            )
+        ) |&gt; ignore
+    graph
+</code></pre><p>A few words on this algorithm. When I first implemented it <em>as-is</em> from the paper, I found that the total runtime shot up from 5.5s to <strong>12s</strong>! That was really disheartening, since I was sure that implementing a better algorithm was the key to speeding this algorithm up.</p>
+<p>Nonetheless, with a few performance improvements, I managed to get the program to run at <strong>1.4s</strong>, another order of magnitude improvement! Firstly, I implemented the middle loop as a parallel for loop, which helped to speed things up a little[2].</p>
+<p>But the main improvement came by avoiding work (<em>again</em>). Notice that I do an <strong>if true</strong> check on adj.[i,k] before I run the innermost loop. If that is false, we skip a whole inner loop of work. That&rsquo;s <strong>2000</strong> iterations saved - No wonder the speed up was an order of magnitude!</p>
+<p>Compare the contrast to the old version (some omissions):</p>
+<pre><code class="language-F#" data-lang="F#">let reduceOld (graph: Digraph): Digraph =
+    for k = n-1 downto 0 do
+        for i in 0..n-1 do
+            for j in 0..n-1 do
+                if adj.[i, k] &amp;&amp; adj.[k, j] then
+                    adj.[i, j] &lt;- false
+
+let reduce (graph: Digraph): Digraph =
+    for k = n-1 downto 0 do
+        Parallel.For(0, n,
+            (fun i -&gt;
+                if adj.[i, k] then
+                    for j in 0..n-1 do
+                        if adj.[k, j] then
+                            adj.[i, j] &lt;- false
+            )
+        ) |&gt; ignore
+</code></pre><h2 id="the-proof-in-the-pudding-aka-the-code">The proof in the pudding (aka the code)</h2>
+<p>If you want to see the code, here&rsquo;s a link to the Github repo: <a href="https://github.com/thomastay/expensive_modules">Link to Github Repo</a></p>
+<h2 id="squeezing-the-last-drop-of-performance">Squeezing the last drop of performance</h2>
+<p>By and large, I was pretty happy with the performance as is, so I stopped here.</p>
+<p>There were some other things that helped increase performance by little bits and pieces here and there, mentioning them for completeness:</p>
+<ul>
+<li>Preallocating capacity for HashSets and Dictionaries helped increase performance by 0.1s.</li>
+<li>For HashSets, I first preallocated the capacity of the sum of all the sizes of the arrays it was going to merge together. However, that causes the hashsets to become too big. With some profiling, I found that doing sumOfSizes / 4 worked best.</li>
+</ul>
+<h2 id="failed-ideas">Failed ideas</h2>
+<p>More than knowing what worked, it&rsquo;s also useful to note what didn&rsquo;t work:</p>
+<ol>
+<li>I tried to beat String.Split() by writing my custom lex and parse phase but failed. As it turns out, String.Split() isn&rsquo;t too slow for this application (~1.8MB file).</li>
+<li>Also, on the CLR memory allocations are really cheap, so having 4000 strings in memory was a hassle for the GC, but didn&rsquo;t affect runtime significantly. Plus, it gets GC-ed pretty quickly as it&rsquo;s only used in Graph creation.</li>
+<li>As part of the above, I tried to speed up the graph creation by incrementally building it during the string parsing phase, but I couldn&rsquo;t get it to beat the simple implementation. At any rate, it turns out that the parsing and graph creation is not the bottleneck.</li>
+<li>Merging nodes is the bottleneck of this algorithm. I tried doing parallel merge and sorted merge using plain sorted arrays, but that didn&rsquo;t help either. Turns out HashSets are too darn optimized.</li>
+</ol>
+<h2 id="footnotes">Footnotes</h2>
+<ol>
+<li>
+<p>An algorithm for transitive reduction of an acyclic graph (1987). Gries, D., Martin, A. J. et al</p>
+</li>
+<li>
+<p>You may notice that I&rsquo;m performing parallel reads and writes to a shared mutable data structure, namely the 2D adjacency matrix. While this is normally highly discouraged, in this case it is fine, since the reads and writes are guaranteed to never overlap. That said, although conceptually it makes sense (each thread has a different row), it is not obvious that it holds at the processor level.  <br>
+To verify this, I dug into the System.Corelib.Private source code to check how they perform writes on a 2D array. The fear would be that if arr.[i, 2000] and arr.[i+1, 0] overlap. This can only happen if the CLR isn&rsquo;t addressing each boolean by itself, but rather batching boolean reads and writes. Thankfully, the CLR uses regular unsafe pointer arithmetic to get and set booleans. Since most modern processors are byte-addressable, this means that there is no overlap.<br>
+Phew! These are the details one has to worry about when performing lock-free reads and writes to shared mutable state.</p>
+</li>
+</ol>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://ttay.me" target="_blank">Homepage</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  <script src="/blog/js/highlight.pack.js"></script>
+
+
+<script>
+  hljs.initHighlightingOnLoad();
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>
