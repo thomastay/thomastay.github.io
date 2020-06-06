@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "Lessons learnt from optimizing a graph algorithm in F sharp",
       "headline" : "Lessons learnt from optimizing a graph algorithm in F sharp",
-      "description" : "In this article I\x26rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! Spoiler alert: Use the right data structures, exploit cache efficiency, and do less work.\nFor those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don\x26rsquo;t understand a line of code in the article.",
+      "description" : "In this article I\x26rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.\nFor those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don\x26rsquo;t understand a line of code in the article.",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -40,9 +40,9 @@
 <title>Lessons learnt from optimizing a graph algorithm in F sharp - Thomas Tay&#39;s blog</title>
   <meta property="og:title" content="Lessons learnt from optimizing a graph algorithm in F sharp - Thomas Tay&#39;s blog" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! Spoiler alert: Use the right data structures, exploit cache efficiency, and do less work.
+  <meta property="og:description" content="In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.
 For those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don&rsquo;t understand a line of code in the article." />
-  <meta name="description" content="In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! Spoiler alert: Use the right data structures, exploit cache efficiency, and do less work.
+  <meta name="description" content="In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.
 For those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don&rsquo;t understand a line of code in the article." />
   <meta property="og:locale" content="en-us" />
 
@@ -85,7 +85,7 @@ For those unaware, F# is a functional-first language that runs on the .NET platf
 
         <div class="post-content markdown-body">
           
-          <p>In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from <strong>58s</strong> down to <strong>1.2s</strong>, nearly a 50x improvement! <em>Spoiler alert</em>: Use the right data structures, exploit <strong>cache</strong> efficiency, and <strong>do less work</strong>.</p>
+          <p>In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from <strong>58s</strong> down to <strong>1.2s</strong>, nearly a 50x improvement! <em>TLDR</em>: Use the right data structures, exploit <strong>cache</strong> efficiency, and <strong>do less work</strong>.</p>
 <p>For those unaware, F# is a <em>functional-first language that runs on the .NET platform (think C#)</em>. Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible <strong>even if</strong> you don&rsquo;t understand a line of code in the article.</p>
 <p><em>Why F#</em>? All significant optimizations come from <em>careful profiling</em> and <em>significant refactoring</em>, and F# has very good support for both. F#&lsquo;s strong type system makes refactoring safe, and Visual Studio integration makes profiling easy. Also, I love that I get highly tuned data structures via .NET to speed up my algorithms.</p>
 <p>Bear in mind that I am by no means an F# expert, so there may be better ways to optimize this code.</p>
