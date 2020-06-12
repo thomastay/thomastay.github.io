@@ -208,6 +208,7 @@ At this point, the secondary worker&rsquo;s stack is garbage, and may be collect
 <p>More significantly, programming without blocking operations is really painful. It reminds me of early Javascript before async-await: You had to program everything with callbacks and promises. Functions that should have been one long block were split into multiple blocks.</p>
 <p>Pony does have promises, which helps to prevent callback hell, but as JS programmers know, promises just aren&rsquo;t as convenient as async await.</p>
 <p>I wonder if it&rsquo;s possible for the Pony compiler to implement Javascript-style async-await, since Pony already has closures and promises.</p>
+<p><em>Notice anything wrong?</em> <a href="https://github.com/thomastay/personal-blog/blob/master/content/pony_actors_no_stacks.md">Edit this page on Github</a></p>
 <h2 id="footnotes">Footnotes</h2>
 <ol>
 <li>Yes, this is not valid Pony code. For those watching closely, the main actor has no constructor, so env cannot be used. Moreover, these are not functions, but actually asynchronous behaviors. That said, I didn&rsquo;t want to confuse anyone not familiar with Pony code.</li>
