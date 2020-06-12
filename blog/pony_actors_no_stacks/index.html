@@ -130,7 +130,7 @@ But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks! Instead
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>end
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#75715e"># prints: Original: 55, New: 3025</span>
 </code></pre></div><p>Both these languages solve this problem in quite the same way. First, the main actor does the summation. Then, the main actor spawns a worker actor to do the squaring. It then <strong>blocks</strong> to allow the second actor to do its work, and waits for the second actor to signal completion, either through a channel or through messages.</p>
-<h2 id="demo">Demo</h2>
+<h2 id="a-diagram-to-show-you-what-i-mean">A diagram to show you what I mean</h2>
 <p>It&rsquo;s the blocking operation that requires a stack. To demonstrate, let&rsquo;s pretend that we&rsquo;re running this application on a single CPU.</p>
 <p><img src="/blog/img/actor-stack-go.png" alt="Golang stack illustration"></p>
 <p>As you can see in the figure above, the main Goroutine has its own stack. At time 1, the secondary worker is spawned, which creates another stack. Then, the main Goroutine yields control to the secondary worker. The stack pointer moves to the secondary worker&rsquo;s stack.</p>
@@ -162,10 +162,11 @@ At this point, the secondary worker&rsquo;s stack is garbage, and may be collect
 <p>Finally, let&rsquo;s define printResult():</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>  <span style="color:#66d9ef">var</span> x: <span style="color:#66d9ef">I32</span> <span style="color:#75715e">// x is a member variable
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#75715e"></span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>  <span style="color:#66d9ef">be</span> <span style="color:#a6e22e">printResult</span>(newVal: <span style="color:#66d9ef">I32</span>) =&gt;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    _env.out.print(<span style="color:#e6db74">&#34;Original: &#34;</span> <span style="color:#f92672">+</span> x.<span style="color:#a6e22e">string()</span> 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>                  <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;, New: &#34;</span> <span style="color:#f92672">+</span> newVal.<span style="color:#a6e22e">string()</span>)
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#75715e"></span>  <span style="color:#75715e">// ---- snipped ----
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span style="color:#75715e"></span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>  <span style="color:#66d9ef">be</span> <span style="color:#a6e22e">printResult</span>(newVal: <span style="color:#66d9ef">I32</span>) =&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>    _env.out.print(<span style="color:#e6db74">&#34;Original: &#34;</span> <span style="color:#f92672">+</span> x.<span style="color:#a6e22e">string()</span> 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span>                  <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;, New: &#34;</span> <span style="color:#f92672">+</span> newVal.<span style="color:#a6e22e">string()</span>)
 </code></pre></div><p>You&rsquo;ll notice that we got around not having a stack by storing <strong>x</strong> in a Actor member variable. This is unlike Go and Elixir, where we can just refer to x since we have the stack frame lying around. In Pony, if you want to keep variable across asynchronous method calls, you have to explicitly store it in the Actor, which means that <strong>x</strong> is stored in the <em>heap</em>, and not the <em>stack</em>.</p>
 <p>Let&rsquo;s look at a time diagram.</p>
 <p><img src="/blog/img/actor-stack-pony.png" alt="Pony-actor-stack"></p>
