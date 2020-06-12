@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.71.0" />
+  <meta name="generator" content="Hugo 0.73.0-DEV" />
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "Lessons learnt from optimizing a graph algorithm in F sharp",
       "headline" : "Lessons learnt from optimizing a graph algorithm in F sharp",
-      "description" : "In this article I\x26rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.\nFor those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don\x26rsquo;t understand a line of code in the article.",
+      "description" : "In this article I\u0026rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.\nFor those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don\u0026rsquo;t understand a line of code in the article.",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -87,7 +87,7 @@ For those unaware, F# is a functional-first language that runs on the .NET platf
           
           <p>In this article I&rsquo;m going to share how I optimized a graph algorithms interview question down from <strong>58s</strong> down to <strong>1.2s</strong>, nearly a 50x improvement! <em>TLDR</em>: Use the right data structures, exploit <strong>cache</strong> efficiency, and <strong>do less work</strong>.</p>
 <p>For those unaware, F# is a <em>functional-first language that runs on the .NET platform (think C#)</em>. Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible <strong>even if</strong> you don&rsquo;t understand a line of code in the article.</p>
-<p><em>Why F#</em>? All significant optimizations come from <em>careful profiling</em> and <em>significant refactoring</em>, and F# has very good support for both. F#&lsquo;s strong type system makes refactoring safe, and Visual Studio integration makes profiling easy. Also, I love that I get highly tuned data structures via .NET to speed up my algorithms.</p>
+<p><em>Why F#</em>? All significant optimizations come from <em>careful profiling</em> and <em>significant refactoring</em>, and F# has very good support for both. F#&rsquo;s strong type system makes refactoring safe, and Visual Studio integration makes profiling easy. Also, I love that I get highly tuned data structures via .NET to speed up my algorithms.</p>
 <p>Bear in mind that I am by no means an F# expert, so there may be better ways to optimize this code.</p>
 <h2 id="the-question">The question</h2>
 <p>As with all interview questions, they usually come with a good &lsquo;ol blurb which attempts to give some context to the horridly abstract question you&rsquo;re expected to comprehend. Here&rsquo;s my attempt at paraphrasing it (note that all this is original writing, nothing copied):</p>
@@ -132,11 +132,11 @@ F 2
 <h2 id="performance-with-data-structures">Performance with Data Structures</h2>
 <p>As <a href="https://www.youtube.com/watch?v=fHNmRkzxHWs">Chandler Carruth</a> puts it, performance with data structures, efficiency with algorithms. The thing that made the most difference in my F# code was <strong>Data structures, Data structures, Data structures</strong>.</p>
 <p>When I first wrote my F# code, it was filled with Maps and Lists. Now, that was very good F# code: <em>idiomatic</em> and <em>easy to read</em>, but it also meant that it was <strong>really slow</strong>. As you may be aware, F# maps are implemented as Binary Trees, which means that insert and search are O(log n) time operations. The hot path of my application involved a lot of Map lookups, and so I changed the F# maps to .NET dictionaries, which have O(1) lookup time.</p>
-<p>Similarly, I changed F#&lsquo;s sets to HashSets, and changed the F#&lsquo;s lists (which are linked lists) to .NET arrays, which have much better cache locality. Since I was mostly looping over my lists, having them as arrays made them looping faster.</p>
+<p>Similarly, I changed F#&rsquo;s sets to HashSets, and changed the F#&rsquo;s lists (which are linked lists) to .NET arrays, which have much better cache locality. Since I was mostly looping over my lists, having them as arrays made them looping faster.</p>
 <p>Changing immutable collections to mutable ones for performance is not surprising in itself, but it&rsquo;s important to remember that mutablity makes the code harder to reason about.</p>
 <p>So, I kept the Maps and Lists around in the parsing section of the code, which my benchmarking showed only took less than half a second - recall that the merge step took almost a <em>full minute</em>!</p>
 <p>We&rsquo;ll get around to optimizing that later on, but as always, profile your code and only make life more complex if you have to.</p>
-<p>Here&rsquo;s a snippet to demonstrate what I mean. The old code is presented first, which uses F#&lsquo;s sets, maps and lists, and the new code is below.</p>
+<p>Here&rsquo;s a snippet to demonstrate what I mean. The old code is presented first, which uses F#&rsquo;s sets, maps and lists, and the new code is below.</p>
 <p>This does a Depth-First Search (DFS) to obtain the set of child nodes that are under each parent node. There&rsquo;s obviously a lot to explain in this code, which I won&rsquo;t go into, but here&rsquo;s a summary of the Data Structures changed:</p>
 <ul>
 <li>Adjacency lists (Map from string to Set&lt;string&gt;) got changed to a 2D adjacency matrix of bools</li>
@@ -207,7 +207,7 @@ F 2
 <p>With these two perf improvements, I was able to get my total time down from <em>58s</em> to <em>5.5s</em>, an <strong>10x</strong> improvement!</p>
 <h2 id="efficiency-with-algorithms">Efficiency with Algorithms</h2>
 <p>Now at this point I had spent about three days writing the improved code, and I was feeling really good. All that stuff about exploiting cache efficiency was paying off, and I felt that I could get it under a second by Monday. The next step, though, wasn&rsquo;t so easy. The bottleneck proved to be calculating the set of child nodes under each parent.</p>
-<p>Right now, I was storing each set of child nodes as an int[]. To calculate the set of all nodes under a particular <em>parent</em> node, I would recursively compute the set of all nodes under each of the <em>parent</em>&lsquo;s children, then use a HashSet to merge them together. Repeated efforts to improve the code proved futile, shaving only milliseconds off.</p>
+<p>Right now, I was storing each set of child nodes as an int[]. To calculate the set of all nodes under a particular <em>parent</em> node, I would recursively compute the set of all nodes under each of the <em>parent</em>&rsquo;s children, then use a HashSet to merge them together. Repeated efforts to improve the code proved futile, shaving only milliseconds off.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">module</span> ChildNodes <span style="color:#f92672">=</span> 
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>    <span style="color:#66d9ef">let</span> build <span style="color:#f92672">(</span>lst<span style="color:#f92672">:</span> int[][]<span style="color:#f92672">):</span> int[] <span style="color:#f92672">=</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>        <span style="color:#66d9ef">let</span> d <span style="color:#f92672">=</span> HashSet()
