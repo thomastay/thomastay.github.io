@@ -16,7 +16,7 @@
       <pubDate>Fri, 12 Jun 2020 12:00:00 +0800</pubDate>
       
       <guid>https://ttay.me/blog/pony_actors_no_stacks/</guid>
-      <description>In this short article I&amp;rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 1KB (with 1KB heaps). Elixir/Erlang processes have a 1.2KB combined stack and heap. But surprisingly, Pony&amp;rsquo;s actors don&amp;rsquo;t have their own stacks!</description>
+      <description>In this short article I&amp;rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir/Erlang processes have a 1.2KB combined stack and heap. But surprisingly, Pony&amp;rsquo;s actors don&amp;rsquo;t have their own stacks!</description>
     </item>
     
     <item>
