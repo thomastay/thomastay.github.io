@@ -5,10 +5,27 @@
     <link>https://ttay.me/blog/</link>
     <description>Recent content on Thomas Tay&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en-us</language><atom:link href="https://ttay.me/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Brian Harry on Resource Management in .NET (2000)</title>
+      <link>https://ttay.me/blog/brada_on_resource_management/</link>
+      <pubDate>Mon, 17 Aug 2020 22:47:39 +0800</pubDate>
+      
+      <guid>https://ttay.me/blog/brada_on_resource_management/</guid>
+      <description>The following email is written by Brian Harry and published by Brad Abrams (brada), written in 2000. It&amp;rsquo;s about the .NET runtime (C#, F#, VB), and why they decided to go with Garbage collection instead of sticking with reference counting. Worth a read if you&amp;rsquo;re interested in the debate between GC systems vs Ref Counted systems.
+The question is all the more relevant these days (2020), with Ref Counted systems in vogue and GC out of fashion.</description>
+    </item>
     
-	<atom:link href="https://ttay.me/blog/index.xml" rel="self" type="application/rss+xml" />
-    
+    <item>
+      <title>Causal Messaging by example</title>
+      <link>https://ttay.me/blog/causal_messaging/</link>
+      <pubDate>Fri, 17 Jul 2020 12:00:00 +0800</pubDate>
+      
+      <guid>https://ttay.me/blog/causal_messaging/</guid>
+      <description>When people first build a distributed system, they normally think of FIFO messaging, or maybe they build their system to be linearizable. But there&amp;rsquo;s an in-betweener, and that&amp;rsquo;s causal messaging.
+Instead of giving you the definition, which is pretty mathematical, I&amp;rsquo;ll let you read it on your own, and I&amp;rsquo;ll give a real life example that you can hopefully grok.
+Causal messaging is pretty important for some types of distributed systems.</description>
+    </item>
     
     <item>
       <title>Pony actors don&#39;t have (their own) stacks</title>

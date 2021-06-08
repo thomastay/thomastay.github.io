@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.73.0-DEV" />
+  <meta name="generator" content="Hugo 0.82.1" />
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -228,7 +228,7 @@ C
 <p>We need to do what&rsquo;s called a Transitive Reduction, going in the opposite direction.</p>
 <p>If you&rsquo;ve taken a Discrete Mathematics class (spoiler: I used to teach one), you&rsquo;ll know that there exists an O(n^3) algorithm for computing Transitive Closures, called <a href="https://cs.winona.edu/lin/cs440/ch08-2.pdf">Warshall&rsquo;s algorithm</a>. I won&rsquo;t go too much into depth as the linked PDF explains it well.</p>
 <p>Instead, we&rsquo;re going to use a much lesser known algorithm called <a href="http://www.sciencedirect.com/science/article/pii/0167642389900397/pdf?md5=478ed0e9fa69b427f947fd2bd864b463&amp;pid=1-s2.0-0167642389900397-main.pdf&amp;_valck=1">Gries&rsquo; algorithm</a>[1] to compute the transitive reduction of a graph. It basically runs Warshall&rsquo;s algorithm in reverse, removing transitive edges from the graph as it finds them. Again, read the paper for more details.</p>
-<p>Here is my implementation of Gries&rsquo; algorithm:</p>
+<p>Here is my implementation of Gries' algorithm:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">// Implements the transitve reduction algorithm
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e">// minor perf improvements have been made
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> reduce <span style="color:#f92672">(</span>graph<span style="color:#f92672">:</span> Digraph<span style="color:#f92672">):</span> Digraph <span style="color:#f92672">=</span>

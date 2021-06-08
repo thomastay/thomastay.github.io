@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.82.1" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://ttay.me/blog/causal_messaging/" />
+  <link rel="canonical" href="https://ttay.me/blog/causal_messaging/" /><link rel="apple-touch-icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="shortcut" href="/assets/img/favicon-32x32.png" /><link rel="alternate" type="application/atom+xml" href="https://ttay.me/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/ttay.me\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "Causal Messaging by example",
+      "headline" : "Causal Messaging by example",
+      "description" : "When people first build a distributed system, they normally think of FIFO messaging, or maybe they build their system to be linearizable. But there\u0026rsquo;s an in-betweener, and that\u0026rsquo;s causal messaging.\nInstead of giving you the definition, which is pretty mathematical, I\u0026rsquo;ll let you read it on your own, and I\u0026rsquo;ll give a real life example that you can hopefully grok.\nCausal messaging is pretty important for some types of distributed systems.",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2020",
+      "datePublished": "2020-07-17 12:00:00 \u002b0800 \u002b0800",
+      "dateModified" : "2020-07-17 12:00:00 \u002b0800 \u002b0800",
+      "url" : "https:\/\/ttay.me\/blog\/causal_messaging\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>Causal Messaging by example - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="Causal Messaging by example - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="When people first build a distributed system, they normally think of FIFO messaging, or maybe they build their system to be linearizable. But there&rsquo;s an in-betweener, and that&rsquo;s causal messaging.
+Instead of giving you the definition, which is pretty mathematical, I&rsquo;ll let you read it on your own, and I&rsquo;ll give a real life example that you can hopefully grok.
+Causal messaging is pretty important for some types of distributed systems." />
+  <meta name="description" content="When people first build a distributed system, they normally think of FIFO messaging, or maybe they build their system to be linearizable. But there&rsquo;s an in-betweener, and that&rsquo;s causal messaging.
+Instead of giving you the definition, which is pretty mathematical, I&rsquo;ll let you read it on your own, and I&rsquo;ll give a real life example that you can hopefully grok.
+Causal messaging is pretty important for some types of distributed systems." />
+  <meta property="og:locale" content="en-us" />
+
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
+  <link rel="stylesheet" href="/blog/css/index.min.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">Causal Messaging by example</h1>
+          
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>When people first build a distributed system, they normally think of FIFO messaging, or maybe they build their system to be linearizable. But there&rsquo;s an in-betweener, and that&rsquo;s causal messaging.</p>
+<p>Instead of giving you the definition, which is pretty mathematical, I&rsquo;ll let you read it on your own, and I&rsquo;ll give a real life example that you can hopefully grok.</p>
+<p>Causal messaging is pretty important for some types of distributed systems. It&rsquo;s used in implementing reference counting in the Pony runtime, for implementing sane Logging systems, and generally just making sure that your system makes sense, without full linearizability. You probably already use a Causal messaging system without knowing it &mdash; synchronous gRPC calls basically almost guarantees causal messaging.</p>
+<p>But one place that causal messaging doesn&rsquo;t show up is in vanilla TCP connections. TCP only guarantees FIFO ordering of messages, without any causal ordering of messages between systems.</p>
+<p>So, let&rsquo;s take a look at what I mean:</p>
+<h1 id="scenario">Scenario</h1>
+<p>Let&rsquo;s imagine a fictional chat room. There are 3 people, Alice, Thomas, and you. In this chat room, people just broadcast messages to everyone else without a central server. Horrible, I know, but effective.</p>
+<pre><code>     Alice
+   /       \
+  /         \
+ You ----- Thomas
+</code></pre><p>Let&rsquo;s say that Alice greets Thomas. After that, she asks him how his day was, and Thomas replies.<br>
+For Alice, these are the 3 messages she sees on her computer:</p>
+<ol>
+<li>Alice: Hello, Thomas!</li>
+<li>Alice: How was your day?</li>
+<li>Thomas: Pretty alright, work was busy.</li>
+</ol>
+<p>Let&rsquo;s call these message 1, 2, and 3 respectively. To avoid confusion, I&rsquo;m going to use bullet points later on.</p>
+<h4 id="so-what-do-you-the-silent-observer-see">So what do you, the silent observer, see?</h4>
+<p>Well, there are 3 possibilities:</p>
+<h3 id="causal-messaging">Causal messaging</h3>
+<p>Scenario 1: (<em>I&rsquo;ll have the usual, Joe</em>)</p>
+<ul>
+<li>Alice: Hello, Thomas!</li>
+<li>Alice: How was your day?</li>
+<li>Thomas: Pretty alright, work was busy.</li>
+</ul>
+<p>Scenario 2: (<em>kinda weird but alright</em>)</p>
+<ul>
+<li>Alice: Hello, Thomas!</li>
+<li>Thomas: Pretty alright, work was busy.</li>
+<li>Alice: How was your day?</li>
+</ul>
+<h3 id="no-causal-messaging-but-fifo-ordered">No Causal messaging, but FIFO ordered</h3>
+<p>Scenario 3: (<em>ok&hellip;&hellip;?</em>)</p>
+<ul>
+<li>Thomas: Pretty alright, work was busy.</li>
+<li>Alice: Hello, Thomas!</li>
+<li>Alice: How was your day?</li>
+</ul>
+<h2 id="huh-thats-not-what-i-expected">Huh? That&rsquo;s not what I expected?</h2>
+<p>Scenario 3 can&rsquo;t occur under causal messaging because Alice&rsquo;s first message is sent after her second. Since Thomas sends message 3 only after seeing the second message, there&rsquo;s a dependency between message 1 and message 3. That means that message 1 will be delivered before 3.</p>
+<p>Most people (including me, when I first thought about this) are surprised that scenario 2 can occur under causal messaging. The reason is as follows:</p>
+<ul>
+<li>Message 1 must come before 2, since Alice sends 1 before 2, and messages are sent out in FIFO order.</li>
+<li>Message 1 must precede 3, since the message 2 causes message 3 to be sent. Since message 1 is sent before message 2, this means that message 1 precedes 3.</li>
+<li>However, message 3 can arrive at your doorstep earlier than 2! Think of it this way: Let&rsquo;s say that Alice broadcasts out message 2 to both Thomas and you. In the time it takes for 2 to reach you, Thomas has received message 2, and send out message 3, which reaches you first. This isn&rsquo;t a violation of causal ordering, since Alice&rsquo;s broadcast of message 2 occurs concurrently.</li>
+</ul>
+<h2 id="what-if-i-dont-like-things-out-of-order">What if I don&rsquo;t like things out of order?</h2>
+<p>Note that if you only want scenario 1 to be the only scenario that happens, what you desire is <strong>serializability</strong> and not causal messaging.</p>
+<p>To do that, you basically have to have one actor process each message, effectively turning your server into single-threaded mode. While this is often required for chat servers, it&rsquo;s often unnecessary for other types of work.</p>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://ttay.me" target="_blank">About</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://ttay.me/blog" target="_blank">Blog</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+
+<script>
+  
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>

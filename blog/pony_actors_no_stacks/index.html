@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.73.0-DEV" />
+  <meta name="generator" content="Hugo 0.82.1" />
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -31,8 +31,8 @@
       "accountablePerson" : "Thomas",
       "copyrightHolder" : "Thomas",
       "copyrightYear" : "2020",
-      "datePublished": "2020-06-12 12:00:00 \u002b0800 \u002b08",
-      "dateModified" : "2020-06-12 12:00:00 \u002b0800 \u002b08",
+      "datePublished": "2020-06-12 12:00:00 \u002b0800 \u002b0800",
+      "dateModified" : "2020-06-12 12:00:00 \u002b0800 \u002b0800",
       "url" : "https:\/\/ttay.me\/blog\/pony_actors_no_stacks\/",
       "keywords" : [  ]
   }
@@ -121,13 +121,13 @@ But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks! Instead
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#75715e"># Spawn a thread to compute the square</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>parent <span style="color:#f92672">=</span> self()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>spawn fn <span style="color:#f92672">-&gt;</span> send(parent, {<span style="color:#e6db74">:result</span>, x <span style="color:#f92672">*</span> x}) end
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>spawn <span style="color:#66d9ef">fn</span> <span style="color:#f92672">-&gt;</span> send(parent, {<span style="color:#e6db74">:result</span>, x <span style="color:#f92672">*</span> x}) <span style="color:#66d9ef">end</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#75715e"># Return the result to the main process</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>receive do
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#66d9ef">receive</span> <span style="color:#66d9ef">do</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>  {<span style="color:#e6db74">:result</span>, newVal} <span style="color:#f92672">-&gt;</span> 
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    <span style="color:#a6e22e">IO</span><span style="color:#f92672">.</span>puts(<span style="color:#e6db74">&#34;Original: </span><span style="color:#e6db74">#{</span>x<span style="color:#e6db74">}</span><span style="color:#e6db74">, New: </span><span style="color:#e6db74">#{</span>newVal<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>end
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#66d9ef">end</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#75715e"># prints: Original: 55, New: 3025</span>
 </code></pre></div><p>Both these languages solve this problem in quite the same way. First, the main actor does the summation. Then, the main actor spawns a worker actor to do the squaring. It then <strong>blocks</strong> to allow the second actor to do its work, and waits for the second actor to signal completion, either through a channel or through messages.</p>
 <h2 id="a-diagram-to-show-you-what-i-mean">A diagram to show you what I mean</h2>
