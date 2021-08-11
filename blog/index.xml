@@ -7,6 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://ttay.me/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Blub Framework Lifecycle</title>
+      <link>https://ttay.me/blog/blub-framework-lifecycle/</link>
+      <pubDate>Wed, 09 Jun 2021 19:09:23 -0700</pubDate>
+      
+      <guid>https://ttay.me/blog/blub-framework-lifecycle/</guid>
+      <description>Blub framework is hacked together in a weekend. It is lean and mean, and solves all the problems of Blub domain. Pre-Blub users look at Blub, think it&amp;rsquo;s really cool but doesn&amp;rsquo;t have any libraries, so they pass. Blub framework is noticed by smart people, who begin building cool, interesting solutions with it. Blub now has its own website and learning guides. `${UNICORN_VIRAL_STARTUP}` adopts Blub, and now everyone pays attention.</description>
+    </item>
+    
+    <item>
       <title>Brian Harry on Resource Management in .NET (2000)</title>
       <link>https://ttay.me/blog/brada_on_resource_management/</link>
       <pubDate>Mon, 17 Aug 2020 22:47:39 +0800</pubDate>
