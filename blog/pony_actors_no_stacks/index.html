@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.82.1" />
+  <meta name="generator" content="Hugo 0.87.0" />
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -86,7 +86,7 @@
           <p>In this short article I&rsquo;m going to talk about how <a href="https://ponylang.io">Pony</a> gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir/Erlang processes have a 1.2KB combined stack and heap.
 But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks! Instead, they use the stack of the OS thread that they&rsquo;re running on.</p>
 <p>Let&rsquo;s take a step back. What even is Pony? For the purposes of this blog, all you have to know is that Pony is an Actor based programming language. That means that in Pony, you can define an actors that send messages to each other, like so:   [1]</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>  <span style="color:#66d9ef">be</span> <span style="color:#a6e22e">say</span>() =&gt; <span style="color:#75715e">// say() is a function that can be called on the actor
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#75715e"></span>    env.out.print(<span style="color:#e6db74">&#34;Hello, world!&#34;</span>)
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>
@@ -99,7 +99,7 @@ But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks! Instead
 <p>So what do I mean when I say that Pony actors have no stacks? Let&rsquo;s take an example in Go and Elixir to see where stacks are needed in those two languages.</p>
 <p>For this post, let&rsquo;s describe a very simple ping demo. We will have an main actor, that sums the numbers from 1 to 10. Then, we will pass it to actor 2, who squares that number, then returns the value to actor 1. Finally, actor 1 prints both the original and the squared numbers. A contrived example, but one that shows off what I mean to show.</p>
 <p>In Go, here&rsquo;s how we would write the code:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span> 
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>  <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    <span style="color:#a6e22e">x</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">i</span>
@@ -117,7 +117,7 @@ But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks! Instead
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>  <span style="color:#75715e">// prints: Original: 55, New: 3025
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#75715e"></span>}
 </code></pre></div><p>In Elixir, here&rsquo;s how we would write the code: [2]</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-elixir" data-lang="elixir"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>x <span style="color:#f92672">=</span> <span style="color:#a6e22e">Enum</span><span style="color:#f92672">.</span>sum(<span style="color:#ae81ff">1</span><span style="color:#f92672">..</span><span style="color:#ae81ff">10</span>)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-elixir" data-lang="elixir"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>x <span style="color:#f92672">=</span> <span style="color:#a6e22e">Enum</span><span style="color:#f92672">.</span>sum(<span style="color:#ae81ff">1</span><span style="color:#f92672">..</span><span style="color:#ae81ff">10</span>)
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#75715e"># Spawn a thread to compute the square</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>parent <span style="color:#f92672">=</span> self()
@@ -140,7 +140,7 @@ At this point, the secondary worker&rsquo;s stack is garbage, and may be collect
 <p>However, in Pony there are <strong>no blocking operations</strong>, which is the key to not needing a stack!</p>
 <p>In Pony, we have to write it in a different way. Here&rsquo;s how we would solve the same problem in Pony.</p>
 <p>First, we need to have a main actor, to compute the sum of 1 to 10 and spawn a worker. We do so in the constructor of the Main actor:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>  <span style="color:#66d9ef">var</span> x: <span style="color:#66d9ef">I32</span> <span style="color:#75715e">// x is a member variable
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#75715e"></span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">create</span>(env: <span style="color:#66d9ef">Env</span>) =&gt;
@@ -154,13 +154,13 @@ At this point, the secondary worker&rsquo;s stack is garbage, and may be collect
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Squarer</span>.square(x, <span style="color:#66d9ef">this</span>)
 </code></pre></div><p>Notice that we don&rsquo;t do anything after calling the square function on the Squarer actor! This is because there is no way to block. Instead, the squarer actor must perform the callback to print messages, which we will see in a second.</p>
 <p>Let&rsquo;s define the squarer Actor that will perform our squaring:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Squarer</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Squarer</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>  <span style="color:#66d9ef">be</span> <span style="color:#a6e22e">square</span>(x: <span style="color:#66d9ef">I32</span>, main: <span style="color:#a6e22e">Main</span>) =&gt;
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    <span style="color:#66d9ef">let</span> newVal <span style="color:#f92672">=</span> x <span style="color:#f92672">*</span> x
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    main.printResult(newVal)
 </code></pre></div><p>In the square function, we passed along a reference to the Main actor. To those familiar with Elixir, you might want to think of the reference as like the PID of the actor. With the PID, we can then send a message to the main Actor, to tell it to print the squared result.</p>
 <p>Finally, let&rsquo;s define printResult():</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>  <span style="color:#66d9ef">var</span> x: <span style="color:#66d9ef">I32</span> <span style="color:#75715e">// x is a member variable
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#75715e"></span>  <span style="color:#75715e">// ---- snipped ----
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span style="color:#75715e"></span>
@@ -178,7 +178,7 @@ At this point, the secondary worker&rsquo;s stack is garbage, and may be collect
 </ol>
 <p>Not shown for clarity: the <em>env</em> variable, the <em>this</em> pointer of the Squarer actor. Also, this isn&rsquo;t exactly how it works, thanks to optimizations, but it&rsquo;s a good mental approximation to what happens.</p>
 <p>Putting it together, we get:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">use</span> <span style="color:#e6db74">&#34;collections&#34;</span>  <span style="color:#75715e">// for the Range operator
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">use</span> <span style="color:#e6db74">&#34;collections&#34;</span>  <span style="color:#75715e">// for the Range operator
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e"></span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>  <span style="color:#66d9ef">let</span> _env: <span style="color:#66d9ef">Env</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>  <span style="color:#66d9ef">var</span> x: <span style="color:#66d9ef">I32</span>
@@ -217,7 +217,7 @@ At this point, the secondary worker&rsquo;s stack is garbage, and may be collect
 <li>For fun, I&rsquo;ve rewritten the Pony example using (a) callbacks, and (b) promises.</li>
 </ol>
 <h3 id="using-callbacks">Using callbacks</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">use</span> <span style="color:#e6db74">&#34;collections&#34;</span>  <span style="color:#75715e">// for the Range operator
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">use</span> <span style="color:#e6db74">&#34;collections&#34;</span>  <span style="color:#75715e">// for the Range operator
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e"></span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>  <span style="color:#66d9ef">let</span> _env: <span style="color:#66d9ef">Env</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>  <span style="color:#66d9ef">var</span> x: <span style="color:#66d9ef">I32</span>
@@ -246,7 +246,7 @@ At this point, the secondary worker&rsquo;s stack is garbage, and may be collect
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    <span style="color:#66d9ef">let</span> newVal <span style="color:#f92672">=</span> x <span style="color:#f92672">*</span> x
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>    callback(newVal)
 </code></pre></div><h3 id="using-promises-and-partial-application">Using promises and partial application</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">use</span> <span style="color:#e6db74">&#34;collections&#34;</span>  <span style="color:#75715e">// for the Range operator
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-pony" data-lang="pony"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">use</span> <span style="color:#e6db74">&#34;collections&#34;</span>  <span style="color:#75715e">// for the Range operator
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e"></span><span style="color:#66d9ef">use</span> <span style="color:#e6db74">&#34;promises&#34;</span> 
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#66d9ef">actor</span> <span style="color:#a6e22e">Main</span>
