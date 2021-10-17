@@ -177,6 +177,7 @@ You can conceptually think of this as walking down the edges of the huffman tree
 </code></pre><p>Those are our 8 &lsquo;a&rsquo;s! two literals followed by a repeat of 6 &lsquo;a&rsquo;s, then a LF.</p>
 <p>The &ldquo;repeat 6x, 1 behind&rdquo; is a length+distance (LEN,DIST) code, and it tells the decoder that the character to be repeated is the previous one that it just decoded. Which is &lsquo;a&rsquo;, in this case.</p>
 <p>Not too shabby, we&rsquo;ve encoded our 8 &lsquo;a&rsquo;s and LF (originally 72 bits) into 46 bits with 2 padding bits.</p>
+<p>But I feel that gzip could have done better, though. It could have simply encoded a single <code>a</code> followed by 261, which is the code to repeat 7 times. I thought this was because I ran <code>gzip -1</code>, but running regular gzip seems to repro this. I don&rsquo;t understand why this is the case and I hope someone can explain this.</p>
 <h2 id="finishing-off---checksum-and-size">Finishing off - checksum and size</h2>
 <p>Let&rsquo;s finish off the gzip file. Next we&rsquo;re supposed to see a CRC32. Going to an online crc32 tool, we see that the uncompressed 8 &lsquo;a&rsquo;s with a line feed will generate: <code>ad d7 77 b6</code>.
 Indeed, if we look at the hex stream again:</p>
