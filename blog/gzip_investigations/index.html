@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.87.0" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://ttay.me/blog/gzip_investigations/" />
+  <link rel="canonical" href="https://ttay.me/blog/gzip_investigations/" /><link rel="apple-touch-icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="shortcut" href="/assets/img/favicon-32x32.png" /><link rel="alternate" type="application/atom+xml" href="https://ttay.me/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/ttay.me\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "Decompressing a gzip file by hand",
+      "headline" : "Decompressing a gzip file by hand",
+      "description" : "Let\u0026rsquo;s make a gzipped file and see what\u0026rsquo;s in it. We\u0026rsquo;ll keep it simple: just write 8 \u0026lsquo;a\u0026rsquo;s to a file.\n$ echo \u0026quot;aaaaaaaa\u0026quot; \u0026gt; test.out\r$ xxd test.out\r00000000: 6161 6161 6161 6161 0a aaaaaaaa.\rAs we can see, our file is 9 bytes long. We have 8 \u0026lsquo;a\u0026rsquo; bytes written, plus a Line Feed (LF) character written at the end.\nLet\u0026rsquo;s make the gzip file now. We\u0026rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about.",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2021",
+      "datePublished": "2021-10-16 00:03:59 -0700 -0700",
+      "dateModified" : "2021-10-16 00:03:59 -0700 -0700",
+      "url" : "https:\/\/ttay.me\/blog\/gzip_investigations\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>Decompressing a gzip file by hand - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="Decompressing a gzip file by hand - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.
+$ echo &quot;aaaaaaaa&quot; &gt; test.out$ xxd test.out00000000: 6161 6161 6161 6161 0a aaaaaaaa.As we can see, our file is 9 bytes long. We have 8 &lsquo;a&rsquo; bytes written, plus a Line Feed (LF) character written at the end.
+Let&rsquo;s make the gzip file now. We&rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about." />
+  <meta name="description" content="Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.
+$ echo &quot;aaaaaaaa&quot; &gt; test.out$ xxd test.out00000000: 6161 6161 6161 6161 0a aaaaaaaa.As we can see, our file is 9 bytes long. We have 8 &lsquo;a&rsquo; bytes written, plus a Line Feed (LF) character written at the end.
+Let&rsquo;s make the gzip file now. We&rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about." />
+  <meta property="og:locale" content="en-us" />
+
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
+  <link rel="stylesheet" href="/blog/css/index.min.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">Decompressing a gzip file by hand</h1>
+          
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.</p>
+<pre><code>$ echo &quot;aaaaaaaa&quot; &gt; test.out
+$ xxd test.out
+00000000: 6161 6161 6161 6161 0a     aaaaaaaa.
+</code></pre><p>As we can see, our file is 9 bytes long. We have 8 &lsquo;a&rsquo; bytes written, plus a Line Feed (LF) character written at the end.</p>
+<p>Let&rsquo;s make the gzip file now. We&rsquo;ll do <code>gzip -1</code>, since that will use the fastest compression mode and give us more things to talk about.</p>
+<pre><code>$ gzip -1 test.out
+$ xxd test.out.gz
+00000000: 1f8b 0808 bf35 6a61 0403 7465 7374 2e6f  .....5ja..test.o
+00000010: 7574 004b 4c84 002e 00b6 66d7 ad09 0000  ut.KL.....f.....
+00000020: 00
+</code></pre><p><em>Disclaimer: I made this post as a learning exercise, and any mistakes I make here are my own. I enjoy low level programming but do web dev at Teams as my day job.</em></p>
+<h2 id="gzip-specific-info">gzip specific info</h2>
+<p>The first few bytes are quite straightforward:</p>
+<ol>
+<li><code>1f8b</code> - &ldquo;magic&rdquo;, hardcoded gzip header</li>
+<li><code>08</code> - Signifies DEFLATE compression method</li>
+<li><code>08(00001000)</code> - bit 3 is set, so there will be a filename</li>
+<li><code>bf35 6a61</code> - timestamp of UTC Saturday, October 16, 2021 2:15:27 AM</li>
+<li><code>04</code> - compressor used fastest algo (that&rsquo;s what the -1 was for)</li>
+<li><code>03</code> - Unix operating system (useful for LF/CLRF)</li>
+</ol>
+<p>The next few bytes are the filename:</p>
+<pre><code>74 65 73 74 2e 6f 75 74 00
+t  e  s  t  .  o  u  t  NUL
+</code></pre><h2 id="the-deflated-data">The deflated data</h2>
+<p>The data starts from byte 0x13, with 4b. To decode, we&rsquo;ll need to see the individual bits since DEFLATE packs the information in bits that can cross the byte boundary. It&rsquo;s not uncommon to have codes that are 5 bits or 9 bits.</p>
+<pre><code>$ xxd -s 19 -b test.out.gz
+00000013: 01001011 01001100 10000100 00000000 00101110 00000000  KL....
+00000019: 10110110 01100110 11010111 10101101 00001001 00000000  .f....
+0000001f: 00000000 00000000
+</code></pre><p>Let&rsquo;s break it down. Unfortunately, xxd prints out the bytes one by one, from MSB to LSB. But in gzip, the bytes are packed LSB to MSB. So we have to reverse the strings byte by byte. Let&rsquo;s also define some convenience functions to help us compute numbers</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(<span style="color:#a6e22e">require</span> [clojure.string <span style="color:#e6db74">:as</span> str])
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>(<span style="color:#66d9ef">defn </span>reverse-str-bytewise [s] 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>  (<span style="color:#a6e22e">-&gt;&gt;</span> (<span style="color:#a6e22e">str/replace</span> s <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#e6db74">&#34;&#34;</span>) 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>       (<span style="color:#a6e22e">partition</span> <span style="color:#ae81ff">8</span>) 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>       (map <span style="color:#f92672">#</span>(apply str %)) 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>       (map str/reverse)))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>(<span style="color:#a6e22e">reverse-str-bytewise</span> <span style="color:#e6db74">&#34;01001011 01001100 10000100 00000000 00101110 00000000&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#75715e">; (&#34;11010010&#34; &#34;00110010&#34; &#34;00100001&#34; &#34;00000000&#34; &#34;01110100&#34; &#34;00000000&#34;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#75715e">; ^^^^^^ This is the bitstream we will examine below ^^^^^^</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>(<span style="color:#66d9ef">defn </span>str-&gt;bits [s] (<span style="color:#a6e22e">-&gt;&gt;</span> s (<span style="color:#a6e22e">str/reverse</span>) (<span style="color:#a6e22e">mapv</span> <span style="color:#f92672">#</span>(<span style="color:#66d9ef">if </span>(= % <span style="color:#e6db74">\1</span>) <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">0</span>))))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>(<span style="color:#a6e22e">str-&gt;bits</span> <span style="color:#e6db74">&#34;110010&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#75715e">; [0 1 0 0 1 1]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>(<span style="color:#66d9ef">defn </span>bin-&gt;dec [s] 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>  (<span style="color:#a6e22e">-&gt;&gt;</span> s 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>       (<span style="color:#a6e22e">str-&gt;bits</span>) 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>       (<span style="color:#a6e22e">reduce-kv</span> (<span style="color:#66d9ef">fn </span>[acc, i, elem] 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>                    (<span style="color:#66d9ef">if </span>(= elem <span style="color:#ae81ff">1</span>) (+ acc (bit-shift-left <span style="color:#ae81ff">1</span> i)) acc)) 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>                  <span style="color:#ae81ff">0</span>))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>(<span style="color:#a6e22e">bin-&gt;dec</span> <span style="color:#e6db74">&#34;10001&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#75715e">; 17</span>
+</code></pre></div><p><em>The above is <a href="https://clojure.org/">Clojure code</a>. Don&rsquo;t worry if you don&rsquo;t understand it, it&rsquo;s just some helpers</em></p>
+<h2 id="decoding-the-block">Decoding the block</h2>
+<pre><code>8bitswise: 11010010   00110010 00100001 00000000 01110100 00000000
+separated: 1 10 10010001 10010001 0000100 00000 00111010 0000000 00
+</code></pre><p>1 - final block</p>
+<p>01 - compressed with fixed huffman codes (don&rsquo;t forget that although the bitstream says &ldquo;10&rdquo;, it is read as 01 because the data literals are to be interpreted in little endian format)</p>
+<p>Next we have to decode the huffman codes. If you haven&rsquo;t read <a href="https://datatracker.ietf.org/doc/html/rfc1951#page-12">the official DEFLATE spec</a>, read section 3.2.6 (fixed huffman codes) before continuing on or it won&rsquo;t make much sense. I&rsquo;ve included the huffman table below:</p>
+<pre><code>Lit Value    Bits        Codes
+---------    ----        -----
+  0 - 143     8          00110000 through
+                         10111111
+144 - 255     9          110010000 through
+                         111111111
+256 - 279     7          0000000 through
+                         0010111
+280 - 287     8          11000000 through
+                         11000111
+</code></pre><p>To decode the huffman codes, we have to read up to the next 9 bits
+Then, the prefix of the next 9 bits will tell us how many bits we really needed to read.
+You can conceptually think of this as walking down the edges of the huffman tree too, but huffman decoders will usually just read 9 bits, look them up in the table, and then &ldquo;put back&rdquo; whatever bits it didn&rsquo;t need.</p>
+<p>100100011 - this has the prefix 100, which tells us that is a literal between 0-143. So it is only 8 bits (1001 0001).</p>
+<p><em>Don&rsquo;t forget that the huffman codes are packed LSB to MSB, but are to be interpreted as an integer in big endian format. Why this insanity?</em> ¯\<em>(ツ)</em>/¯ &hellip; <em>NOT my decision.</em></p>
+<p>Decoding, we get: val = (10010001 subtract 00110000) = 145 - 48 = 97</p>
+<p>97 is the ASCII for &lsquo;a&rsquo;. Perfect!</p>
+<p>Decoding the rest of the bits, we get:</p>
+<pre><code>1 10 10010001 10010001 0000100  00000       00111010    0000000    00
+     97       97         260     0            58          256      -
+     'a'      'a'    repeat 6x  1 behind    0x10 (LF)    HALT     &lt;padding&gt;
+     LIT      LIT       LEN     DIST        LIT         
+</code></pre><p>Those are our 8 &lsquo;a&rsquo;s! two literals followed by a repeat of 6 &lsquo;a&rsquo;s, then a LF.</p>
+<p>The &ldquo;repeat 6x, 1 behind&rdquo; is a length+distance (LEN,DIST) code, and it tells the decoder that the character to be repeated is the previous one that it just decoded. Which is &lsquo;a&rsquo;, in this case.</p>
+<p>Not too shabby, we&rsquo;ve encoded our 8 &lsquo;a&rsquo;s and LF (originally 72 bits) into 46 bits with 2 padding bits.</p>
+<h2 id="finishing-off---checksum-and-size">Finishing off - checksum and size</h2>
+<p>Let&rsquo;s finish off the gzip file. Next we&rsquo;re supposed to see a CRC32. Going to an online crc32 tool, we see that the uncompressed 8 &lsquo;a&rsquo;s with a line feed will generate: <code>ad d7 77 b6</code>.
+Indeed, if we look at the hex stream again:</p>
+<pre><code>$ xxd test.out.gz
+00000000: 1f8b 0808 bf35 6a61 0403 7465 7374 2e6f  .....5ja..test.o
+00000010: 7574 004b 4c84 002e 00b6 66d7 ad09 0000  ut.KL.....f.....
+00000020: 00                
+</code></pre><p>We can clearly see <code>b6 66 d7 ad</code>, in little endian byte order. This is the crc checksum.</p>
+<p>The next 4 bytes <code>09 00 00 00</code> is little endian byte order for 9 bytes. Indeed, we decoded 9 bytes, and there are 9 bytes in our input file.</p>
+<h2 id="summary">Summary</h2>
+<p>So this is the file breakdown:</p>
+<pre><code>gzip info: 1f8b 0808 bf35 6a61 0403 
+filename: 7465 7374 2e6f 7574 00 
+DEFLATE data: 4b 4c 84 00 2e 00
+crc32: b6 66 d7 ad 
+size: 09 00 00 00                
+</code></pre><p>If you see any mistakes, <a href="https://github.com/thomastay/personal-blog/issues">please correct them on Github</a>, or email me at <code>thomastayac</code>. Google mail.</p>
+<h1 id="references">References</h1>
+<p>I found these articles extremely helpful, in no particular order:</p>
+<ol>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc1951">The official deflate spec</a></li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc1952">The official gzip spec</a></li>
+<li><a href="https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art001">Dissecting the GZIP format, by Joshua Davies</a></li>
+<li><a href="https://www.euccas.me/zlib/">Understanding zlib, by Euccas Chen</a></li>
+<li><a href="https://zlib.net/feldspar.html">An explanation of the Deflate algorithm, by Antaeus Feldspar</a></li>
+<li><a href="https://jvns.ca/blog/2013/10/24/day-16-gzip-plus-poetry-equals-awesome/">gzip + poetry = awesome, by Julia Evans</a></li>
+<li><a href="https://jvns.ca/blog/2013/10/16/day-11-how-does-gzip-work/">How does gzip work?, by Julia Evans</a></li>
+</ol>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://ttay.me/blog" target="_blank">More articles</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://ttay.me" target="_blank">Homepage</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay/hugo-theme-yinyang" target="_blank">Theme</a>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+
+<script>
+  
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>

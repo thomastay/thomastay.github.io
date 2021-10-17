@@ -7,6 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://ttay.me/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Decompressing a gzip file by hand</title>
+      <link>https://ttay.me/blog/gzip_investigations/</link>
+      <pubDate>Sat, 16 Oct 2021 00:03:59 -0700</pubDate>
+      
+      <guid>https://ttay.me/blog/gzip_investigations/</guid>
+      <description>Let&amp;rsquo;s make a gzipped file and see what&amp;rsquo;s in it. We&amp;rsquo;ll keep it simple: just write 8 &amp;lsquo;a&amp;rsquo;s to a file.
+$ echo &amp;quot;aaaaaaaa&amp;quot; &amp;gt; test.out$ xxd test.out00000000: 6161 6161 6161 6161 0a aaaaaaaa.As we can see, our file is 9 bytes long. We have 8 &amp;lsquo;a&amp;rsquo; bytes written, plus a Line Feed (LF) character written at the end.
+Let&amp;rsquo;s make the gzip file now. We&amp;rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about.</description>
+    </item>
+    
+    <item>
       <title>Blub Framework Lifecycle</title>
       <link>https://ttay.me/blog/blub-framework-lifecycle/</link>
       <pubDate>Wed, 09 Jun 2021 19:09:23 -0700</pubDate>
