@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.87.0" />
+  <meta name="generator" content="Hugo 0.88.1" />
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -93,14 +93,14 @@ For those unaware, F# is a functional-first language that runs on the .NET platf
 <p>As with all interview questions, they usually come with a good &lsquo;ol blurb which attempts to give some context to the horridly abstract question you&rsquo;re expected to comprehend. Here&rsquo;s my attempt at paraphrasing it (note that all this is original writing, nothing copied):</p>
 <p><strong>The question:</strong> Applications in 2020 typically have hundreds of dependencies, all of which need to be compiled. The downside is, changing one module might cause all the downstream modules to be recompiled. The task is as follows: given a set of 2000 modules, all of which depend on each other in some way, print the number of modules downstream of each module.</p>
 <p>The input will look like the following. In this representation, module A depends on B, E, and F. As a result, module A is downstream of module B (and E,F too).</p>
-<pre><code>A B E F
+<pre tabindex="0"><code>A B E F
 B D
 C B D E
 D E
 E
 F D
 </code></pre><p>This corresponds to the following dependency graph:</p>
-<pre><code>            E
+<pre tabindex="0"><code>            E
             |
             D
            / \
@@ -109,7 +109,7 @@ F D
         C   A
 </code></pre><p>Notice that not all edges are drawn, in particular any transitive edges are not drawn. This will come in useful later.</p>
 <p>This program will produce the following output, corresponding to the number of downstream modules (including itself):</p>
-<pre><code>A 1
+<pre tabindex="0"><code>A 1
 B 3
 C 1
 D 5
@@ -118,7 +118,7 @@ F 2
 </code></pre><h2 id="the-original-solution">The original solution</h2>
 <p>The exact solution isn&rsquo;t super critical, so I won&rsquo;t go into too much depth (as well as not to spoil the fun for those new to the question). Basically, it involves building a Directed Acyclic Graph (DAG) out of the list of lists, and then running a Depth-First Search in order to identify the number of children under each node.</p>
 <p>Before a recursive call to the DFS on some node returns, it updates a shared hashtable, to indicate which children are under the node. For instance, in the tree:</p>
-<pre><code>            E
+<pre tabindex="0"><code>            E
             |
             D
            / \
@@ -215,7 +215,7 @@ F 2
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>            d<span style="color:#f92672">.</span>UnionWith s
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>        d <span style="color:#f92672">|&gt;</span> Seq.toArray
 </code></pre></div><p>Now what? Well, after some testing, I noticed a big problem. <strong>Most edges in the graph are useless</strong>. To show you what I mean, let&rsquo;s take a very simple example of a graph, where A depends on B, which depends on C.</p>
-<pre><code>A &lt;- B &lt;- C
+<pre tabindex="0"><code>A &lt;- B &lt;- C
 // represented as:
 A B C
 B C
