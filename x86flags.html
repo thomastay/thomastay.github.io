@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<meta name="description" content="Calculate x86 carry/overflow flags">
+	<meta name="author" content="Thomas Tay Ang Chun">
+	<link rel="icon" type="image/png" href="assets/img/favicon-32x32.png?" sizes="32x32" />
+	<link rel="icon" type="image/png" href="assets/img/favicon-16x16.png?" sizes="16x16" />
+
+	<script type="text/javascript">
+		'use strict';
+		function update() {
+			let a = Number.parseInt(document.getElementById("inputASlider").value);
+			let b = Number.parseInt(document.getElementById("inputBSlider").value);
+			document.getElementById("inputAValue").innerText = a;
+			document.getElementById("inputABinary").innerText = binary(a);
+			document.getElementById("inputBValue").innerText = b;
+			document.getElementById("inputBBinary").innerText = binary(b);
+			add(a, b);
+			cmp(a, b);
+		}
+
+		function cmp(a, b) {
+			let { zero, sign, parity, overflow } = compute(a, b, a - b);
+			let carry = unsigned(a) < unsigned(b);
+			// cmp
+			document.getElementById("cmp-zero").innerText = toInt(zero);
+			document.getElementById("cmp-sign").innerText = toInt(sign);
+			document.getElementById("cmp-overflow").innerText = toInt(overflow);
+			document.getElementById("cmp-carry").innerText = toInt(carry);
+			// jmps
+			// signed
+			document.getElementById("jump-jl").innerText = (sign !== overflow);
+			document.getElementById("jump-jle").innerText = (sign !== overflow) || zero;
+			document.getElementById("jump-jg").innerText = (sign === overflow) && !zero;
+			document.getElementById("jump-jge").innerText = (sign === overflow);
+			// unsigned
+			document.getElementById("jump-jb").innerText = carry;
+			document.getElementById("jump-jbe").innerText = carry || zero;
+			// misc
+			document.getElementById("jump-jo").innerText = overflow;
+			document.getElementById("jump-js").innerText = sign;
+			document.getElementById("jump-je").innerText = zero;
+			document.getElementById("jump-jp").innerText = parity;
+		}
+
+		function add(a, b) {
+			let { result, zero, sign, overflow } = compute(a, b, a + b);
+			let carry = unsigned(a) + unsigned(b) > 15;
+			document.getElementById("add-result").innerText = result;
+			document.getElementById("add-binary").innerText = binary(result);
+			document.getElementById("add-zero").innerText = toInt(zero);
+			document.getElementById("add-sign").innerText = toInt(sign);
+			document.getElementById("add-overflow").innerText = toInt(overflow);
+			document.getElementById("add-carry").innerText = toInt(carry);
+		}
+
+		function compute(a, b, c) {
+			let result = clamp4Bits(c);
+			return {
+				result,
+				parity: parity(result),
+				zero: c === 0,
+				sign: sign(result),
+				overflow: sign(a) === sign(b) && sign(a) !== sign(result),
+			}
+		}
+
+		function binary(x) {
+			return binaryDigitsArr(x).join("");
+		}
+
+		function parity(x) {
+			let u = unsigned(x);
+			let even = true;
+			for (let i = 0; i < 4; i++) {
+				var c = u & (1 << i);
+				if (c !== 0) { even = !even; }
+			}
+			return even;
+		}
+
+		function binaryDigitsArr(x) {
+			let u = unsigned(x);
+			let result = [];
+			for (let i = 0; i < 4; i++) {
+				var c = u & (1 << i);
+				if (c === 0) { result.unshift("0") } else { result.unshift("1") }
+			}
+			return result;
+
+		}
+
+		function unsigned(x) {
+			// -1 -> 15
+			// -2 -> 14
+			if (x < 0) return 16 + x;
+			return x;
+		}
+
+		function sign(x) {
+			return x < 0;
+		}
+
+		function clamp4Bits(x) {
+			// -9 --> 7
+			if (x < -8) return 16 + x;
+			// 8 --> -8
+			// 9 --> -7
+			if (x > 7) return -16 + x;
+			return x;
+		}
+
+		function toInt(b) { return b ? 1 : 0; }
+
+		function equalize() {
+			let a = document.getElementById("inputASlider").value;
+			let b = document.getElementById("inputBSlider").value;
+			document.getElementById("inputBSlider").value = a;
+			update();
+		}
+		window.onload = update;
+	</script>
+
+	<style>
+		.jumpResult {
+			font-size: 1.1em;
+			font-weight: bold;
+		}
+
+		.registers {
+			display: flex;
+			flex-direction: row;
+		}
+	</style>
+
+	<title>x86 carry/overflow flags</title>
+</head>
+
+<body>
+	<p>Suppose that there are two 4-bit registers, RAX and RBX. As we all know, add and cmp instructions set the <a
+			href="https://en.wikibooks.org/wiki/X86_Assembly/X86_Architecture#EFLAGS_Register">eflags register</a>. </p>
+	<p>Toggle the slider below to see what register values produce what flags.</p>
+	<div class="registers">
+		<div>
+			<h2>Register RAX</h2>
+			<p><span id="inputAValue">0</span> (<span id="inputABinary">0000</span>)</p>
+			<input type="range" min="-8" max="7" value="0" id="inputASlider" oninput="update()" step="1">
+		</div>
+		<div>
+			<h2>Register RBX</h2>
+			<p><span id="inputBValue">0</span> (<span id="inputBBinary">0000</span>)</p>
+			<input type="range" min="-8" max="7" value="0" id="inputBSlider" oninput="update()" step="1">
+		</div>
+	</div>
+	<button onclick="equalize()">Set rbx = rax</button>
+	<div class="output">
+		<div>
+			<h2>add rax rbx</h2>
+			<h3><span id="add-result">0</span> (<span id="add-binary">0000</span>)</h3>
+			<ul>
+				<li>Overflow flag: <span id="add-overflow">0</span></li>
+				<li>Carry flag: <span id="add-carry">0</span></li>
+				<li>Zero flag: <span id="add-zero">1</span></li>
+				<li>Sign flag: <span id="add-sign">0</span></li>
+			</ul>
+		</div>
+		<div>
+			<div>
+				<h2>cmp rax rbx</h2>
+				<ul>
+					<li>Overflow flag: <span id="cmp-overflow">0</span></li>
+					<li>Carry flag: <span id="cmp-carry">0</span></li>
+					<li>Zero flag: <span id="cmp-zero">1</span></li>
+					<li>Sign flag: <span id="cmp-sign">0</span></li>
+				</ul>
+			</div>
+			<div>
+				<h2>Signed jumps</h2>
+				<ul>
+					<li>Jump if less (jl/jnge): <span id="jump-jl" class="jumpResult">false</span></li>
+					<li>Jump if less or equal (jle/jng): <span id="jump-jle" class="jumpResult">true</span></li>
+					<li>Jump if greater (jg/jnle): <span id="jump-jg" class="jumpResult">false</span></li>
+					<li>Jump if greater or equal (jge/jnl): <span id="jump-jge" class="jumpResult">true</span></li>
+				</ul>
+			</div>
+			<div>
+				<h2>Unsigned jumps</h2>
+				<ul>
+					<li>Jump if below / jump carry (jb/jnae/jc): <span id="jump-jb" class="jumpResult">false</span></li>
+					<li>Jump if below or equal (jbe/jna): <span id="jump-jbe" class="jumpResult">true</span></li>
+				</ul>
+			</div>
+			<div>
+				<h2>Misc Jumps</h2>
+				<ul>
+					<li>Jump if overflow (jo): <span id="jump-jo" class="jumpResult">false</span></li>
+					<li>Jump if sign (js): <span id="jump-js" class="jumpResult">false</span></li>
+					<li>Jump if equal/zero (je/jz): <span id="jump-je" class="jumpResult">true</span></li>
+					<li>Jump if parity even (jp/jpe): <span id="jump-jp" class="jumpResult">true</span></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<p>Note: not all the flags are shown, only the ones affected by add/cmp instructions</p>
+	<p>More on this topic:</p>
+	<ol>
+		<li><a href="https://teaching.idallen.com/dat2343/10f/notes/040_overflow.txt">Notes on carry vs overflow flags</a>
+		</li>
+		<li><a href="https://stackoverflow.com/questions/9617877/assembly-jg-jnle-jl-jnge-after-cmp">SO post on jumps after
+				cmp</a></li>
+	</ol>
+</body>
+
+</html>
