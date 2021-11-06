@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://ttay.me/blog/i_made_x86_flags/</loc>
+    <lastmod>2021-11-06T12:16:51-07:00</lastmod>
+  </url><url>
     <loc>https://ttay.me/blog/gzip_investigations/</loc>
     <lastmod>2021-10-16T00:03:59-07:00</lastmod>
   </url><url>

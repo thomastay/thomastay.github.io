@@ -7,6 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://ttay.me/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>I_made_x86_flags</title>
+      <link>https://ttay.me/blog/i_made_x86_flags/</link>
+      <pubDate>Sat, 06 Nov 2021 12:16:51 -0700</pubDate>
+      
+      <guid>https://ttay.me/blog/i_made_x86_flags/</guid>
+      <description>This is going to be a tiny blog post to say that I&amp;rsquo;ve made a tiny site (microsite?) that&amp;rsquo;s all about x86 flags. I&amp;rsquo;m learning about x86 assembly, SIMD, and microarch these few weeks.
+The eflags register is really confusing, so i made a tiny simulator to help me remember which flag is which. Particularly the carry and overflow flags, cos f**k whoever thought that was a good way to name their flags.</description>
+    </item>
+    
+    <item>
       <title>Decompressing a gzip file by hand</title>
       <link>https://ttay.me/blog/gzip_investigations/</link>
       <pubDate>Sat, 16 Oct 2021 00:03:59 -0700</pubDate>
