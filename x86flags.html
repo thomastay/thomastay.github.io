@@ -25,7 +25,7 @@
 		}
 
 		function cmp(a, b) {
-			let { zero, sign, parity, overflow } = compute(a, b, a - b);
+			let { zero, sign, parity, overflow } = compute(a, -b, a - b);
 			let carry = unsigned(a) < unsigned(b);
 			// cmp
 			document.getElementById("cmp-zero").innerText = toInt(zero);
