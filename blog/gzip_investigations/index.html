@@ -151,7 +151,9 @@ t  e  s  t  .  o  u  t  NUL
 separated: 1 10 10010001 10010001 0000100 00000 00111010 0000000 00
 </code></pre><p>1 - final block</p>
 <p>01 - compressed with fixed huffman codes (don&rsquo;t forget that although the bitstream says &ldquo;10&rdquo;, it is read as 01 because the data literals are to be interpreted in little endian format)</p>
-<p>Next we have to decode the huffman codes. If you haven&rsquo;t read <a href="https://datatracker.ietf.org/doc/html/rfc1951#page-12">the official DEFLATE spec</a>, read section 3.2.6 (fixed huffman codes) before continuing on or it won&rsquo;t make much sense. I&rsquo;ve included the huffman table below:</p>
+<p>Next we have to decode the huffman codes. If you haven&rsquo;t read <a href="https://datatracker.ietf.org/doc/html/rfc1951#page-12">the official DEFLATE spec</a>, the gist of fixed (aka static) huffman codes is that they are a bunch of agreed upon huffman codes that range from 7-9 bits long. As with all huffman codes, each code is prefix free, which means that as you read the bitstream bit by bit, there&rsquo;s never any ambiguitity about when each code ends.</p>
+<p>If you&rsquo;re unsure, read section 3.2.5 and 3.2.6 (fixed huffman codes) of the DEFLATE spec before continuing on or it won&rsquo;t make much sense. <a href="https://en.wikipedia.org/wiki/Canonical_Huffman_code">The Wikipedia page for canonical Huffman codes is also a good read.</a></p>
+<p>I&rsquo;ve included the huffman table from the spec below:</p>
 <pre tabindex="0"><code>Lit Value    Bits        Codes
 ---------    ----        -----
   0 - 143     8          00110000 through
@@ -162,11 +164,10 @@ separated: 1 10 10010001 10010001 0000100 00000 00111010 0000000 00
                          0010111
 280 - 287     8          11000000 through
                          11000111
-</code></pre><p>To decode the huffman codes, we have to read up to the next 9 bits
-Then, the prefix of the next 9 bits will tell us how many bits we really needed to read.
-You can conceptually think of this as walking down the edges of the huffman tree too, but huffman decoders will usually just read 9 bits, look them up in the table, and then &ldquo;put back&rdquo; whatever bits it didn&rsquo;t need.</p>
-<p>100100011 - this has the prefix 100, which tells us that is a literal between 0-143. So it is only 8 bits (1001 0001).</p>
-<p><em>Don&rsquo;t forget that the huffman codes are packed LSB to MSB, but are to be interpreted as an integer in big endian format. Why this insanity?</em> ¯\<em>(ツ)</em>/¯ &hellip; <em>NOT my decision.</em></p>
+</code></pre><p>To decode the huffman codes, we have to (possibly) read up to the next 9 bits. We&rsquo;ll start by reading the bitstream bit by bit, until we identify a prefix that uniquely identifies which character it is. You can conceptually think of this as walking down the edges of the huffman tree.</p>
+<p>Side note: Huffman decoders will usually just read 9 bits straight away, look them up in a table, and then &ldquo;put back&rdquo; whatever bits it didn&rsquo;t need, instead of wasting precious CPU cycles reading bit by bit.</p>
+<p>Our next 9 bits is <code>100100011</code> - this has the prefix 100, which tells us that is a literal between 0-143. So it is only 8 bits (1001 0001).</p>
+<p><em>Don&rsquo;t forget that the huffman codes are packed LSB to MSB, but are to be interpreted as an integer in big endian format. Why this insanity?</em> ¯\<em>(ツ)</em>/¯ &hellip;</p>
 <p>Decoding, we get: val = (10010001 subtract 00110000) = 145 - 48 = 97</p>
 <p>97 is the ASCII for &lsquo;a&rsquo;. Perfect!</p>
 <p>Decoding the rest of the bits, we get:</p>
