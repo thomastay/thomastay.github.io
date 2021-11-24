@@ -185,7 +185,8 @@ Indeed, if we look at the hex stream again:</p>
 <pre tabindex="0"><code>$ xxd test.out.gz
 00000000: 1f8b 0808 bf35 6a61 0403 7465 7374 2e6f  .....5ja..test.o
 00000010: 7574 004b 4c84 002e 00b6 66d7 ad09 0000  ut.KL.....f.....
-00000020: 00                
+00000020: 00                    ^^^^^^^^^^
+                                  Here!
 </code></pre><p>We can clearly see <code>b6 66 d7 ad</code>, in little endian byte order. This is the crc checksum.</p>
 <p>The next 4 bytes <code>09 00 00 00</code> is little endian byte order for 9 bytes. Indeed, we decoded 9 bytes, and there are 9 bytes in our input file.</p>
 <h2 id="summary">Summary</h2>
@@ -195,7 +196,8 @@ filename: 7465 7374 2e6f 7574 00
 DEFLATE data: 4b 4c 84 00 2e 00
 crc32: b6 66 d7 ad 
 size: 09 00 00 00                
-</code></pre><p>If you see any mistakes, <a href="https://github.com/thomastay/personal-blog/issues">please correct them on Github</a>, or email me at <code>thomastayac</code>. Google mail.</p>
+</code></pre><p>Of course, this barely scratches the surface - the real meat of the gzip algorithm is the dynamic huffman codes. In the future, I want to write a part 2 covering this but it will probably be less <em>by hand</em>-ish, and more of an explanatory algorithm to inflate the huffman tables. I tried doing dynamic codes by hand and I quickly ran out of patience after an hour.</p>
+<p>If you see any mistakes, <a href="https://github.com/thomastay/personal-blog/issues">please correct them on Github</a>, or email me at <code>thomastayac</code>. Google mail.</p>
 <h1 id="references">References</h1>
 <p>I found these articles extremely helpful, in no particular order:</p>
 <ol>
