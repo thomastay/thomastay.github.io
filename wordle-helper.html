@@ -10,15 +10,14 @@
 	<meta name="author" content="Thomas Tay Ang Chun">
 	<link rel="icon" type="image/png" href="assets/img/favicon-32x32.png?" sizes="32x32" />
 	<link rel="icon" type="image/png" href="assets/img/favicon-16x16.png?" sizes="16x16" />
-
-
 	<title>Wordle Helpers</title>
 </head>
 
 <body>
   <h1>Enter your wordle guesses below</h1>
-  <p>Regular char is discarded, correct char is succeeded by a period, correct
-  but reordered by a comma.</p>
+  <p>Entering the letter followed by a period meant the letter is in the right
+  spot. Followed by a comma, means in the wrong spot. If not followed by
+  anything, it means the letter is not in the answer.</p>
   <p>E.g. so.ar,e means that s,a,e are not in the word, o is in the right place,
   and r is in the wrong spot.</p>
 	<ol>
@@ -107,7 +106,7 @@ function update() {
         c = word[i],
         correctChar = correct.get(i),
         wrongChar = wrong.get(i);
-      if (correctChar === c) continue;
+      if (correctChar === c) continue; // Handle duplicates
       if (
         notContained.has(c) ||
         (wrongChar && wrongChar === c) ||
