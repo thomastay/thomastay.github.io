@@ -7,6 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://ttay.me/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>100% Reliable and Fast</title>
+      <link>https://ttay.me/blog/100-reliable-and-fast/</link>
+      <pubDate>Sun, 30 Jan 2022 19:31:48 +0800</pubDate>
+      
+      <guid>https://ttay.me/blog/100-reliable-and-fast/</guid>
+      <description>I work on a front end project which has two Git repositories, three completely different build systems, five languages, over 10,000 files and 10 million lines of code. It&amp;rsquo;s been built over six years, with the effort over at least a thousand engineers. At this scale, IDE&amp;rsquo;s just can&amp;rsquo;t work effectively.
+For instance, Jump to Definition (F12 in vscode) mostly works, except when navigating to a concrete implementation of an interface injected ten files away.</description>
+    </item>
+    
+    <item>
       <title>I made x86 flags</title>
       <link>https://ttay.me/blog/i_made_x86_flags/</link>
       <pubDate>Sat, 06 Nov 2021 12:16:51 -0700</pubDate>
@@ -23,7 +33,7 @@ The eflags register is really confusing, so i made a tiny simulator to help me r
       
       <guid>https://ttay.me/blog/gzip_investigations/</guid>
       <description>Let&amp;rsquo;s make a gzipped file and see what&amp;rsquo;s in it. We&amp;rsquo;ll keep it simple: just write 8 &amp;lsquo;a&amp;rsquo;s to a file.
-$ echo &amp;quot;aaaaaaaa&amp;quot; &amp;gt; test.out$ xxd test.out00000000: 6161 6161 6161 6161 0a aaaaaaaa.As we can see, our file is 9 bytes long. We have 8 &amp;lsquo;a&amp;rsquo; bytes written, plus a Line Feed (LF) character written at the end.
+$ echo &amp;#34;aaaaaaaa&amp;#34; &amp;gt; test.out$ xxd test.out00000000: 6161 6161 6161 6161 0a aaaaaaaa. As we can see, our file is 9 bytes long. We have 8 &amp;lsquo;a&amp;rsquo; bytes written, plus a Line Feed (LF) character written at the end.
 Let&amp;rsquo;s make the gzip file now. We&amp;rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about.</description>
     </item>
     
@@ -34,7 +44,7 @@ Let&amp;rsquo;s make the gzip file now. We&amp;rsquo;ll do gzip -1, since that w
       
       <guid>https://ttay.me/blog/blub-framework-lifecycle/</guid>
       <description>Warning: snark
- Blub framework is hacked together in a weekend. It is lean and mean, and solves all the problems of Blub domain. Pre-Blub users look at Blub, think it&amp;rsquo;s really cool but doesn&amp;rsquo;t have any libraries, so they pass. Blub framework is noticed by smart people, who begin building cool, interesting solutions with it. Blub now has its own website and learning guides. `${UNICORN_VIRAL_STARTUP}` adopts Blub, and now everyone pays attention.</description>
+Blub framework is hacked together in a weekend. It is lean and mean, and solves all the problems of Blub domain. Pre-Blub users look at Blub, think it&amp;rsquo;s really cool but doesn&amp;rsquo;t have any libraries, so they pass. Blub framework is noticed by smart people, who begin building cool, interesting solutions with it. Blub now has its own website and learning guides. `${UNICORN_VIRAL_STARTUP}` adopts Blub, and now everyone pays attention.</description>
     </item>
     
     <item>
@@ -75,6 +85,16 @@ Causal messaging is pretty important for some types of distributed systems.</des
       <guid>https://ttay.me/blog/optimizing_graph_algo_fsharp/</guid>
       <description>In this article I&amp;rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.
 For those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don&amp;rsquo;t understand a line of code in the article.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://ttay.me/blog/a_computers_no/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ttay.me/blog/a_computers_no/</guid>
+      <description>A Computer&amp;rsquo;s No A computer&amp;rsquo;s No is the most powerful answer for code quality that has ever existed. Unlike the human No, it cannot be bought, bargained, or bullied into submission. If a computer says No, that is the end of it; we as the soft pliable humans simply have to work around it.
+Memory The original Apollo guidance computer fit into x bytes. The hard work of many dozens of engineers, squeezing their code into the very last bit.</description>
     </item>
     
   </channel>

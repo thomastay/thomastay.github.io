@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.108.0">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://ttay.me/blog/100-reliable-and-fast/" />
+  <link rel="canonical" href="https://ttay.me/blog/100-reliable-and-fast/" /><link rel="apple-touch-icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="shortcut" href="/assets/img/favicon-32x32.png" /><link rel="alternate" type="application/atom+xml" href="https://ttay.me/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/ttay.me\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "100% Reliable and Fast",
+      "headline" : "100% Reliable and Fast",
+      "description" : "I work on a front end project which has two Git repositories, three completely different build systems, five languages, over 10,000 files and 10 million lines of code. It\u0026rsquo;s been built over six years, with the effort over at least a thousand engineers. At this scale, IDE\u0026rsquo;s just can\u0026rsquo;t work effectively.\nFor instance, Jump to Definition (F12 in vscode) mostly works, except when navigating to a concrete implementation of an interface injected ten files away.",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2022",
+      "datePublished": "2022-01-30 19:31:48 \u002b0800 \u002b0800",
+      "dateModified" : "2022-01-30 19:31:48 \u002b0800 \u002b0800",
+      "url" : "https:\/\/ttay.me\/blog\/100-reliable-and-fast\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>100% Reliable and Fast - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="100% Reliable and Fast - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="I work on a front end project which has two Git repositories, three completely different build systems, five languages, over 10,000 files and 10 million lines of code. It&rsquo;s been built over six years, with the effort over at least a thousand engineers. At this scale, IDE&rsquo;s just can&rsquo;t work effectively.
+For instance, Jump to Definition (F12 in vscode) mostly works, except when navigating to a concrete implementation of an interface injected ten files away." />
+  <meta name="description" content="I work on a front end project which has two Git repositories, three completely different build systems, five languages, over 10,000 files and 10 million lines of code. It&rsquo;s been built over six years, with the effort over at least a thousand engineers. At this scale, IDE&rsquo;s just can&rsquo;t work effectively.
+For instance, Jump to Definition (F12 in vscode) mostly works, except when navigating to a concrete implementation of an interface injected ten files away." />
+  <meta property="og:locale" content="en-us" />
+
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
+  <link rel="stylesheet" href="/blog/css/index.min.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">100% Reliable and Fast</h1>
+          
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>I work on a front end project which has two Git repositories, three completely different build systems, five languages, over 10,000 files and 10 million lines of code. It&rsquo;s been built over six years, with the effort over at least a thousand engineers. At this scale, IDE&rsquo;s just can&rsquo;t work effectively.</p>
+<p>For instance, Jump to Definition (F12 in vscode) mostly works, except when navigating to a concrete implementation of an interface injected ten files away. Hover-over type declarations mostly works, except when the Typescript server can&rsquo;t resolve a particular namespace because some legacy code fiddled with webpack magic. Automatic renaming within files mostly works, except when someone used the same variable name in a deeply nested closure and Typescript can&rsquo;t infer that because there isn&rsquo;t enough type information to go on. And let&rsquo;s not even talk about renaming across files. You&rsquo;d be better off winning the powerball [1].</p>
+<p>In this codebase, there&rsquo;s no substitute for grep. Specifically, there&rsquo;s no substitute for ripgrep, which is the only popular tool i know which can effectively search a codebase of this size. [2] Many of the senior engineers working on this codebase agree. Thank goodness vscode uses ripgrep as the default.</p>
+<p>Same story when debugging production code. Source maps work, except when you&rsquo;re dealing with the oldest cruft of the code which is built on the [<em>redacted</em>] build system instead of industry standard Webpack. Or when you&rsquo;re running your app on your battery powered laptop in the cafeteria, not your powerful dev box. Or when the issue only repros when startup happens too fast and you can&rsquo;t wait for the source maps to load.</p>
+<p>In the end, I followed the senior engineers and now I count myself as being proficient at:</p>
+<p>A) reading prettified mangled Javascript</p>
+<p>B) reading mangled Typescript ES5 output for async functions. For those unwaware, async functions in ES5 compile down to switch cases, where 2 means &ldquo;Continue&rdquo;, 3 means &ldquo;Return&rdquo; and 5-7 indicate error codes. You just have to memorize that, or pay the price of looking that up when you&rsquo;re debugging seven layers deep.</p>
+<h2 id="software-should-have-a-lite-mode">Software should have a lite mode</h2>
+<p>In both these cases, we were saved by the presence of a solution which was 100% effective and fast. That&rsquo;s ripgrep for code search and setting up breakpoints in minified code. Both solutions have a better, more correct alternative, namely IDEs and source maps respectively. Yet in practice, I can assure you that we have to fallback to the simpler methods at least once daily.</p>
+<ol>
+<li>Gmail html only site</li>
+<li>Github vs Git vs Git plumbing tools (can always fall back to Git intenrals)</li>
+<li>Erlang crash handler</li>
+<li>C macros</li>
+<li>Golang compiler vs webpack</li>
+</ol>
+<h1 id="footnotes">Footnotes</h1>
+<ol>
+<li>aka the lotto (UK), or 4D (Singapore).</li>
+<li>I personally have moved off ripgrep, and I use <a href="https://github.com/zeux/qgrep">qgrep</a>, which keeps a compressed index of all the files in work repos. It requires some setup and you have to update the index every time you switch branches, but it is 10x faster than ripgrep. And milliseconds add up.</li>
+</ol>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://ttay.me/blog" target="_blank">More articles</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://ttay.me" target="_blank">Homepage</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay/hugo-theme-yinyang" target="_blank">Theme</a>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+
+<script>
+  
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>
