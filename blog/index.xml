@@ -17,6 +17,16 @@ For instance, Jump to Definition (F12 in vscode) mostly works, except when navig
     </item>
     
     <item>
+      <title>A Computer&#39;s no</title>
+      <link>https://ttay.me/blog/a_computers_no/</link>
+      <pubDate>Mon, 27 Dec 2021 17:55:44 -0800</pubDate>
+      
+      <guid>https://ttay.me/blog/a_computers_no/</guid>
+      <description>A Computer&amp;rsquo;s No A computer&amp;rsquo;s No is the most powerful answer for code quality that has ever existed. Unlike the human No, it cannot be bought, bargained, or bullied into submission. If a computer says No, that is the end of it; we as the soft pliable humans simply have to work around it.
+Memory The original Apollo guidance computer fit into x bytes. The hard work of many dozens of engineers, squeezing their code into the very last bit.</description>
+    </item>
+    
+    <item>
       <title>I made x86 flags</title>
       <link>https://ttay.me/blog/i_made_x86_flags/</link>
       <pubDate>Sat, 06 Nov 2021 12:16:51 -0700</pubDate>
@@ -85,16 +95,6 @@ Causal messaging is pretty important for some types of distributed systems.</des
       <guid>https://ttay.me/blog/optimizing_graph_algo_fsharp/</guid>
       <description>In this article I&amp;rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.
 For those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don&amp;rsquo;t understand a line of code in the article.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://ttay.me/blog/a_computers_no/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ttay.me/blog/a_computers_no/</guid>
-      <description>A Computer&amp;rsquo;s No A computer&amp;rsquo;s No is the most powerful answer for code quality that has ever existed. Unlike the human No, it cannot be bought, bargained, or bullied into submission. If a computer says No, that is the end of it; we as the soft pliable humans simply have to work around it.
-Memory The original Apollo guidance computer fit into x bytes. The hard work of many dozens of engineers, squeezing their code into the very last bit.</description>
     </item>
     
   </channel>
