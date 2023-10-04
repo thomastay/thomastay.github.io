@@ -27,6 +27,16 @@ What is the Wheel? Put simply, the Wheel is a covered call strategy. That&amp;rs
     </item>
     
     <item>
+      <title>How I Made Wordle Helper</title>
+      <link>https://ttay.me/blog/how-i-made-wordle-helper/</link>
+      <pubDate>Tue, 22 Feb 2022 18:16:00 -0800</pubDate>
+      
+      <guid>https://ttay.me/blog/how-i-made-wordle-helper/</guid>
+      <description>I recently made a web app that helps you play Wordle, everyone&amp;rsquo;s favorite word game. In case you haven&amp;rsquo;t heard of it, Wordle is a game where you try and guess a 5 letter word in 6 tries (just Google it!)
+Click here to go to my website and try it out. I thought it might be worth sharing the engineering of how I designed, wrote and published this app. Plenty of people have written much better wordle solvers than mine, using cooler techniques like information theory, unlike my very naive heuristic.</description>
+    </item>
+    
+    <item>
       <title>100% Reliable and Fast</title>
       <link>https://ttay.me/blog/100-reliable-and-fast/</link>
       <pubDate>Sun, 30 Jan 2022 19:31:48 +0800</pubDate>

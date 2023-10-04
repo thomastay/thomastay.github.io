@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.111.3">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://ttay.me/blog/how-i-made-wordle-helper/" />
+  <link rel="canonical" href="https://ttay.me/blog/how-i-made-wordle-helper/" /><link rel="apple-touch-icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="shortcut" href="/assets/img/favicon-32x32.png" /><link rel="alternate" type="application/atom+xml" href="https://ttay.me/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/ttay.me\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "How I Made Wordle Helper",
+      "headline" : "How I Made Wordle Helper",
+      "description" : "I recently made a web app that helps you play Wordle, everyone\u0026rsquo;s favorite word game. In case you haven\u0026rsquo;t heard of it, Wordle is a game where you try and guess a 5 letter word in 6 tries (just Google it!)\nClick here to go to my website and try it out. I thought it might be worth sharing the engineering of how I designed, wrote and published this app. Plenty of people have written much better wordle solvers than mine, using cooler techniques like information theory, unlike my very naive heuristic.",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2022",
+      "datePublished": "2022-02-22 18:16:00 -0800 PST",
+      "dateModified" : "2022-02-22 18:16:00 -0800 PST",
+      "url" : "https:\/\/ttay.me\/blog\/how-i-made-wordle-helper\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>How I Made Wordle Helper - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="How I Made Wordle Helper - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="I recently made a web app that helps you play Wordle, everyone&rsquo;s favorite word game. In case you haven&rsquo;t heard of it, Wordle is a game where you try and guess a 5 letter word in 6 tries (just Google it!)
+Click here to go to my website and try it out. I thought it might be worth sharing the engineering of how I designed, wrote and published this app. Plenty of people have written much better wordle solvers than mine, using cooler techniques like information theory, unlike my very naive heuristic." />
+  <meta name="description" content="I recently made a web app that helps you play Wordle, everyone&rsquo;s favorite word game. In case you haven&rsquo;t heard of it, Wordle is a game where you try and guess a 5 letter word in 6 tries (just Google it!)
+Click here to go to my website and try it out. I thought it might be worth sharing the engineering of how I designed, wrote and published this app. Plenty of people have written much better wordle solvers than mine, using cooler techniques like information theory, unlike my very naive heuristic." />
+  <meta property="og:locale" content="en-us" />
+
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
+  <link rel="stylesheet" href="/blog/css/index.min.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">How I Made Wordle Helper</h1>
+          
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>I recently made a web app that helps you play Wordle, everyone&rsquo;s favorite word game. In case you haven&rsquo;t heard of it, Wordle is a game where you try and guess a 5 letter word in 6 tries (just Google it!)</p>
+<h4 id="click-here-to-go-to-my-website-and-try-it-outwordle-helper"><a href="/wordle-helper">Click here to go to my website and try it out</a>.</h4>
+<p>I thought it might be worth sharing the engineering of how I designed, wrote and published this app. Plenty of people have written
+<a href="https://github.com/jason-chao/wordle-solver">much</a>
+<a href="https://www.kerrigan.dev/2022/01/10/building-a-wordle-solver-in-python.html">better</a>
+<a href="https://github.com/theboywhoboasted/whurdle">wordle</a>
+<a href="https://github.com/christiangenco/wordlesolver">solvers</a>
+than mine, using
+<a href="https://www.youtube.com/watch?v=v68zYyaEmEA">cooler techniques like information theory</a>, unlike my very naive heuristic. I also really like <a href="https://github.com/norvig/pytudes/blob/main/ipynb/Wordle.ipynb">Norvig&rsquo;s simple 4 word solution</a>, designed to be memorizable and usable without the aid of a machine.</p>
+<p>So why is mine special? Well, I designed <a href="/wordle-helper">Wordle Helper</a> with these goals:</p>
+<ol>
+<li>Runs everything locally, no need for a backend server.</li>
+<li>Response time under 10ms, the threshold for instantanous feedback</li>
+<li>Suggest words that a human would guess, not necessarily one that is mathematically optimal</li>
+<li>Fast build times as a developer</li>
+</ol>
+<p>I&rsquo;m going to focus this article on how I managed to achieve those goals.</p>
+<h1 id="1-starting-out">1. Starting out</h1>
+<p>I got the Wordle word list from the website itself. Wordle has an internal word list of 2047 words which it just rotates through daily - that&rsquo;s what the 248 in <code>Wordle 248</code> represents.</p>
+<p>You can easily find the word list by going on the Wordle web site, going to the main.js file in the Sources tab, then click on pretty print. Once the js is pretty printed, just search for a Wordle word like &ldquo;cloak&rdquo; or &ldquo;cigar&rdquo;, and the word list pops up pretty quickly. In the second picture below, it&rsquo;s assigned to the variable <code>Ma</code>.</p>
+<p><img src="/blog/img/wordle-pretty-print-1.jpg" alt="Click on pretty print"></p>
+<p><img src="/blog/img/wordle-wordlist.jpg" alt="word list"></p>
+<p>Once I got this copied into a text file, I immediately sorted it to avoid spoilers. The answers appear one after the other, so if you see the word in position 249, that&rsquo;s the answer for day 249.</p>
+<p>I started out by writing the HTML and Javascript inline directly, copying my other website <a href="/x86flags.html">x86 flags</a>. It looked something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#75715e">&lt;!doctype html&gt;</span> &lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en&#34;</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>&lt;<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>&lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>&lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width, initial-scale=1, shrink-to-fit=no&#34;</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>&lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;description&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Your description here&#34;</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>&lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;author&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Thomas Tay Ang Chun&#34;</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>  <span style="color:#e6db74">&#39;use strict&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>  <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">update</span>() {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>    <span style="color:#75715e">// more here ...
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span><span style="color:#75715e"></span>  }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>&lt;<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>  &lt;<span style="color:#f92672">h1</span>&gt;Enter your guesses here&lt;/<span style="color:#f92672">h1</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>  &lt;<span style="color:#f92672">input</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;input1&#34;</span> <span style="color:#a6e22e">oninput</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;update()&#34;</span>&gt;&lt;/<span style="color:#f92672">input</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>  <span style="color:#75715e">&lt;!-- more here... --&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>&lt;/<span style="color:#f92672">body</span>&gt;
+</span></span></code></pre></div><p><em>Lesson #1</em>: If you&rsquo;re overwhelmed by the JS build ecosystem, you can just start by writing inline JS in a HTML file. Don&rsquo;t let people shame you for it. I did it for <a href="/x86flags.html">X86 flags</a> and it worked out fine.</p>
+<p>However after about a day of writing code, the JS part of my file was growing larger and larger, so it was time to set up a build system.</p>
+<h1 id="2-my-franken-build-system">2. My franken-build system</h1>
+<blockquote>
+<p>Demo build systems are all alike; every real build system is convoluted in its own way - <strong>Tolstoy</strong></p>
+</blockquote>
+<p>At this stage, the usual technique is to split up your file into an index.html, and an index.js. The index.html imports index.js like so:
+<code>&lt;script src=&quot;./index.js&quot;&gt;</code>
+and that lets you write your HTML and JS separately.</p>
+<p>To be honest, I should have just done that, which would shorted this section of the blog post, but I chose to inline the JS into the HTML file instead.</p>
+<p>I knew that when I shipped the end product, I&rsquo;d want to inline the JS into the HTML, for 2 reasons:</p>
+<ol>
+<li>Turns 2 network requests into one, which reduces the failure rate. For some reason, devs tend to assume that script loads never fail, which isn&rsquo;t true. In my day job, I work on <a href="https://www.microsoft.com/en-us/microsoft-teams/group-chat-software">a web app</a> which has a scale large enough that we have to be concerned about this.</li>
+<li>Improves efficiency of the gzip compressor, and thus smaller bundle sizes. From <a href="/blog/gzip_investigations/">my investigations into the DEFLATE spec</a>, I knew that gzip builds a dynamic huffman table for each block (about 16k symbols). Since I guessed that my entire HTML + JS file would fit in one block, this would decrease the overhead of compression since I&rsquo;d only need to store one dynamic huffman table instead of two.</li>
+</ol>
+<p>Of course, there are downsides to this approach, which you should be aware of:</p>
+<ol>
+<li>If your JS comes before your HTML, and your JS is big, it will block the page load. Usual solution to this is to put your JS after your HTML, but then:</li>
+<li>(cont) If your HTML comes before your JS, and your HTML is big, it will prevent the browser from compiling your JS code in parallel, which it can actually do.</li>
+<li>Increases complexity because now you have to inline the JS into the HTML somehow. Pretty much every bundler (Webpack, Snowpack, Vite) out there supports separate HTML and JS files as a default use case.</li>
+</ol>
+<p>Without measuring, I&rsquo;d say that if your HTML is more than 16kb, or if your Javascript files need to be split into multiple bundles, then it makes sense to split the HTML and JS files up for production.</p>
+<p>Note that this has nothing to do with how you <em>develop</em> your applications, in which you should absolutely split your HTML and JS files apart.</p>
+<p>At any rate, I made my life harder for your benefit. <em>you&rsquo;re welcome</em> 😅</p>
+<h2 id="22-how-to-inline">2.2 How to inline?</h2>
+<p>The process of inlining the JS wasn&rsquo;t that glamorous, at the beginning I literally just copy and pasted everything from one file into the other manually. Eventually that got very error prone, so I did two things:</p>
+<ol>
+<li>Installed esbuild to produce a minified one liner file. Esbuild is a godsend to the JS dev tools world, and Evan Wallace should be praised a million times for this.</li>
+<li>Wrote a short Python script that ran esbuild and inlined this one liner at line number 54 of the file. Yes, it was hardcoded. No, I&rsquo;m not (too) ashamed of this.</li>
+</ol>
+<p>This <em>terrible</em> solution looked something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">replace_line</span>(file_name, line_num, text, out_file_name):
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>    lines <span style="color:#f92672">=</span> open(file_name, <span style="color:#e6db74">&#39;r&#39;</span>)<span style="color:#f92672">.</span>readlines()
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    lines[line_num<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> text
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    out <span style="color:#f92672">=</span> open(out_file_name, <span style="color:#e6db74">&#39;w&#39;</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>    out<span style="color:#f92672">.</span>writelines(lines)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    out<span style="color:#f92672">.</span>close()
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>p <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>run([<span style="color:#e6db74">&#34;esbuild&#34;</span>, <span style="color:#e6db74">&#34;--minify&#34;</span>, sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>]],
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>                    capture_output<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, shell<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>minified <span style="color:#f92672">=</span> p<span style="color:#f92672">.</span>stdout<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#34;utf-8&#34;</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>replace_line(sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">2</span>], <span style="color:#ae81ff">54</span>, minified, sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">3</span>])
+</span></span></code></pre></div><p>After a while, I wanted to add CSS, so I inlined and minified that too with esbuild. Then, hardcoding the line numbers eventually came back to bite me as every time I updated the HTML file, I also had to update my python script.</p>
+<p>To solve this problem, I added &ldquo;template&rdquo; tags to my HTML, which looked like this:</p>
+<pre tabindex="0"><code>  &lt;style&gt;
+&lt;% CSS %&gt;
+  &lt;/style&gt;
+
+  &lt;script type=&#34;text/javascript&#34;&gt;
+&lt;% JS %&gt;
+  &lt;/script
+</code></pre><p>My python script then looked for these (hardcoded) tags, and inlined the JS / CSS files there. Note the lack of indents on those tags, that&rsquo;s because my first version of the script didn&rsquo;t even bother trimming whitespace.</p>
+<p>Eventually the Python script became the bottleneck in my build process. At 600ms it wasn&rsquo;t too slow, but <code>esbuild</code> can parse, minify and print my entire JS code in under 8ms. My script does a lot less, so it should definitely run faster.</p>
+<p>Instead of rewriting it in JS, another dynamic language, I decided to take a lesson from SumatraPDF&rsquo;s build system. <a href="https://github.com/sumatrapdfreader/sumatrapdf/blob/27cad0a2914f36789aae0bca8093e4241e3912bf/do/build_epub_docs.go#L1">It&rsquo;s entirely custom and written in Go</a>.</p>
+<p>Go is an excellent tool for writing build scripts, since the compiler is so fast that compiling + running a moderately sized build system is probably comparable to running an interpreted script. If you&rsquo;re willing to precompile your build files, then the startup time becomes unbeatable.</p>
+<p>So I wrote this <a href="https://github.com/thomastay/wordle-helper/blob/master/cmd/build/main.go">little Go templater</a> that did the same as my Python script (and also trims whitespace):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#75715e">// more above, this is the non boilerplate stuff
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">scanner</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">bufio</span>.<span style="color:#a6e22e">NewScanner</span>(<span style="color:#a6e22e">templateFile</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">scanner</span>.<span style="color:#a6e22e">Scan</span>() {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>  <span style="color:#a6e22e">l</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">TrimSpace</span>(<span style="color:#a6e22e">scanner</span>.<span style="color:#a6e22e">Text</span>())
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">HasPrefix</span>(<span style="color:#a6e22e">l</span>, <span style="color:#e6db74">&#34;&lt;%&#34;</span>) {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">replace</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">replaceMap</span>[<span style="color:#a6e22e">l</span>]; <span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>      <span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">Write</span>(<span style="color:#a6e22e">l</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>      <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    } <span style="color:#75715e">//fallthrough
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#75715e"></span>  } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">HasPrefix</span>(<span style="color:#a6e22e">l</span>, <span style="color:#e6db74">&#34;&lt;!--&#34;</span>) {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    <span style="color:#75715e">// This is a HTML line comment
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>  }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>  <span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">WriteString</span>(<span style="color:#a6e22e">l</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>  <span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">WriteByte</span>(<span style="color:#e6db74">&#39;\n&#39;</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>}
+</span></span></code></pre></div><p>There are some asterisks with this templater (see Footnotes), but man does it run fast (~30ms). I got a <strong>20x speedup</strong>, which is worth it if you ask me.</p>
+<p><em>Lesson #2: Use the fastest build tools possible, because they prevent you from adding slower ones</em>.</p>
+<p>See the footnotes for my thoughts about the tradeoff between bundle size and build speed, in deciding not to add Terser as an extra minification step.</p>
+<h2 id="23-bundle-size-tracking">2.3 Bundle size tracking</h2>
+<p>One of the most useful internal tools I wrote was in commiting the bundle size to the repo, in <a href="https://github.com/thomastay/wordle-helper/blob/master/out/bundle-size.json">a JSON file</a>. It looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>{ <span style="color:#f92672">&#34;gzip&#34;</span>: <span style="color:#ae81ff">10203</span>, <span style="color:#f92672">&#34;parsed&#34;</span>: <span style="color:#ae81ff">26314</span> }
+</span></span></code></pre></div><p>It shows the gzipped size of the final bundled index.html, as well as the non-gzipped size. Parsed is an odd word, but it follows the terminology in <a href="https://www.npmjs.com/package/webpack-bundle-analyzer#size-definitions">webpack-bundle-analyzer</a>.</p>
+<p>This is extremely useful in helping you trace the history of your bundle size, and is basically a very simple version of a perf gate. It took me longer than I wanted to implement this, but once I did it I realized what a lifesaver it was.</p>
+<p>So many times, I thought I&rsquo;d found an optimization to reduce bundle size, but it only reduced the minified bundle size, not the gzipped bundle size.
+Previously, to figure this out, I would have to do a lot of manual work.</p>
+<p>It&rsquo;s surprisingly easy to set up. Go comes with a builtin <code>compress/gzip</code>, and using it as a simple as:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span><span style="color:#a6e22e">zw</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gzip</span>.<span style="color:#a6e22e">NewWriter</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">b</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span><span style="color:#a6e22e">zw</span>.<span style="color:#a6e22e">Write</span>(<span style="color:#a6e22e">outputtedHtmlFileAsBytes</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span><span style="color:#a6e22e">gzippedSize</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">Len</span>()
+</span></span></code></pre></div><p>Since I had already written my own templater, it was pretty easy to add this in as a step after writing the index.html to disk.</p>
+<h2 id="24-miscellaneous-build-decisions">2.4 Miscellaneous build decisions</h2>
+<h3 id="241-typescript-or-js">2.4.1 Typescript or JS?</h3>
+<p>I switched to Typescript once I noticed that I couldn&rsquo;t keep maintaining the code in a single file. I feel that&rsquo;s about the right point to switch, since code within a single file is pretty easy to navigate without types, but between files your IDE can catch much more regressions than you can.</p>
+<p>For the DOM stuff, I kept it in JS, since Typescript assumes the DOM operations are fallible when I know that the DOM elements will exist, and adding non-null assertions is really annoying. I moved all non-DOM logic into TS.</p>
+<p>I don&rsquo;t really have much more to say about TS, except that it is very, very good at catching regressions.</p>
+<h3 id="242-formatting">2.4.2 Formatting</h3>
+<p>I format my code with Prettier, with this prettierrc. I like longer print width since I dislike my code getting broken up too much.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>    <span style="color:#f92672">&#34;printWidth&#34;</span>: <span style="color:#ae81ff">120</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>    <span style="color:#f92672">&#34;arrowParens&#34;</span>: <span style="color:#e6db74">&#34;avoid&#34;</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>    <span style="color:#f92672">&#34;trailingComma&#34;</span>: <span style="color:#e6db74">&#34;all&#34;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>}
+</span></span></code></pre></div><h3 id="243-incremental-rebuilds">2.4.3 Incremental rebuilds</h3>
+<p>I use <a href="https://ninja-build.org">Ninja</a> for incremental rebuilds. There are a <a href="https://github.com/casey/just">thousand</a> and <a href="https://gittup.org/tup/">one</a> incremental rebuild systems out there, so pick your favorite. I wouldn&rsquo;t really recommend Ninja to everyone as it&rsquo;s <a href="https://www.youtube.com/watch?v=rI8tNMsozo0">simple but not easy</a>.</p>
+<p>I was inspired to try out Ninja from Julia Evans, who <a href="https://jvns.ca/blog/2020/10/26/ninja--a-simple-way-to-do-builds/">wrote a neat blog post about using Ninja to build inkscape files</a>. I also had some experience using it in college to build C++ projects.</p>
+<p>Ninja&rsquo;s main advantage for me is that it&rsquo;s fast. Like, really really fast. It&rsquo;s probably one of the few pieces of software that actually deserves to call itself <em>lightning fast</em>. A no-op build is 50ms, of which most of the time is spent in Windows&rsquo; CreateProcess call. Ninja itself finishes in 3.6ms.</p>
+<p>To give you a taste, here&rsquo;s what my rule to build my JS bundle looks like:</p>
+<pre tabindex="0"><code>rule esbuild
+    command = node ./node_modules/esbuild/bin/esbuild $minifyOpts $in --outdir=$dist
+
+build $dist/index.js: esbuild $src/index.js | $src/compile-guesses.ts $src/common.ts $src/filter-guesses.ts
+</code></pre><p>As you can see, it&rsquo;s quite tedious since you need to list out all the dependent files. The upside is that it&rsquo;s not too hard to write a program to generate your Ninja files if you really need to, since the syntax is so simple. This means no time wasted in learning someone else&rsquo;s opinion on what a build system should be.</p>
+<h1 id="3-solving-wordle">3. Solving Wordle</h1>
+<p>Compared to the build process, solving wordle was a comparatively easier task. I honestly think that Software Engineering is more about the engineering than it is really about the algorithms.</p>
+<p>First off, I had to come up with a way for users to input their guesses. Writing it into an <code>input</code> tag made the most sense, but how to input the &ldquo;correct&rdquo; / &ldquo;wrong&rdquo; status?</p>
+<p>Since I primarily solve Wordle on my phone (so I can share it via Whatsapp / Signal), I looked at my phone keyboard and saw that <code>,</code> and <code>.</code> were prominently placed. So I decided to make it such that when you enter a letter, you can key in either a period or a comma afterwards, to mark it as correct or wrong, respectively.</p>
+<p>Another approach would have been to allow users to enter their word into letter cards, then make them tap on each letter card to indicate the status, like Wordle does. That seemed promising, but I felt that that was too slow. I wanted to make something for power users (aka myself), and I knew that I would hate using that if I had to use it daily.</p>
+<p>When I later released the app, I was worried people might get confused by the input scheme, but none of my friends seemed to have any issues with it.</p>
+<p>I added a demo button that would input two carefully chosen guesses, to help people get used to the idea of using periods and commas to input the guess results, and that seemed to do the trick.</p>
+<p><em>Lesson 3: People see, People do.</em></p>
+<h2 id="32-sorting-by-frequency">3.2 Sorting by frequency</h2>
+<p>(Update: Oct 2023 - I ran out of motivation for this blog post and stopped here. Still publishing this in case folks are interested in the rest)</p>
+<h2 id="33-server-side-rendering-ssr">3.3 Server Side Rendering (SSR)</h2>
+<p>One thing I never really appreciated until I got into web performance is how much of a difference there is between</p>
+<ol>
+<li>The browser parsing and rendering static html</li>
+<li>The browser using JS to create and add DOM nodes to your static html</li>
+</ol>
+<p>Server side rendering is a way to get around this problem, where you pre-generate the DOM nodes that your JS has to create on app launch and bake them directly into the HTML.</p>
+<p>Especially in page load scenarios, the difference is easily visible in a profiler. If you want to see for some graphs, this <a href="https://github.com/thomastay/wordle-helper/pull/1#issuecomment-1056258932">comment where I added SSR in as a PR on Github</a> has screenshots of the profiler.</p>
+<p>If you look at the screenshots in the comment, you&rsquo;ll see a big long block <code>Event: load</code> in the non-SSR case: that&rsquo;s the time taken for V8 to parse, execute, and create all the DOM nodes at load time. It&rsquo;s about 100ms of time saved.</p>
+<p>Usually, proper SSR is a pain to set up, which is why frameworks like Next / Nuxt / SolidSSR exist; these are for the React / Vue / Solid frameworks respectively. Since I&rsquo;m not using a framework, I had to do SSR myself.</p>
+<p>There is only one part of my website that is dynamically generated, namely the sorted list of words. When the page first loads, the user won&rsquo;t have any guesses (unless they previously keyed in a guess and reloaded the page). In the common case, the list of words is always the same 100 words in the same order, so I was able to precompute the <code>&lt;li&gt;</code> elements for the top 100 words.</p>
+<p>In the template, I added this field:</p>
+<pre tabindex="0"><code>&lt;ol id=&#34;suggestions&#34;&gt;
+  &lt;% SUGGESTIONS %&gt;
+&lt;/ol&gt;
+</code></pre><p>Which gets built and generated by these few lines of code in <code>tools/make-suggestion-nodes.js</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span><span style="color:#a6e22e">sortSuggestions</span>(<span style="color:#a6e22e">solutionWords</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">html</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">solutionWords</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>  .<span style="color:#a6e22e">slice</span>(<span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">NUM_SUGGESTIONS</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>  .<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">makeSuggestionNodeHTML</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>  .<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span><span style="color:#a6e22e">writeFileSync</span>(<span style="color:#a6e22e">suggestionsFilename</span>, <span style="color:#a6e22e">html</span>);
+</span></span></code></pre></div><p>A tiny optimization: per the HTML spec, <code>&lt;li&gt;</code> elements don&rsquo;t have to have a <code>&lt;/li&gt;</code> closing tag, as long as it is immediately followed by another list element, so I don&rsquo;t put in closing tags in the generated SSR html.</p>
+<p>Overall, this process added ~100ms to build time, ~400 bytes to gzipped size, but reduced page load times from 250ms down to 100ms, a major win.</p>
+<h2 id="34-correctness">3.4 Correctness</h2>
+<p>example:</p>
+<p>Suppose the user got a result like this:</p>
+<p>KROO,K,</p>
+<p>this says that there is no K in the first position and last position. Furthermore, it says that there is exactly 1 K and exactly 1 O.
+function to filter</p>
+<p>For instance, here&rsquo;s some words that a naive algorithm might accept:</p>
+<ul>
+<li>CLOAK (wrong, since there one K, but it&rsquo;s in the position marked wrong)</li>
+<li>KIOSK (wrong, since there are 2 Ks, and one O is on the position marked as not contained)</li>
+<li>KOALA (wrong, since there one K, but it&rsquo;s in the position marked as not contained)</li>
+</ul>
+<p>The filtering algorithm provided in kerrigan.dev accepts the last suggestion KOALA listed above, which is incorrect.</p>
+<h1 id="footnotes">Footnotes</h1>
+<h3 id="f1-html-minification">F1. HTML minification</h3>
+<p>Be careful at brazenly doing HTML minification by stripping newlines. If you look at the history of my templater, you&rsquo;ll see a seemingly random if check that checks if a line begins with a open brace or close brace. That&rsquo;s because this templater used to remove all newlines in the file. The problem comes about when Prettier sometimes breaks HTML tags into multiple lines. Here&rsquo;s an example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>&lt;<span style="color:#f92672">input</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;abc&#34;</span>&gt;&lt;/<span style="color:#f92672">input</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>&lt;<span style="color:#f92672">image</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>  <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;potato/a/b/c/d/e/f/potat.jpg&#34;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>  <span style="color:#a6e22e">alt</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;A potato&#34;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>/&gt;
+</span></span></code></pre></div><p>In my templater, since I don&rsquo;t do proper HTML lexing and parsing, this would have become:</p>
+<pre tabindex="0"><code>&lt;input id=&#34;abc&#34;&gt;&lt;/input&gt;&lt;imagesrc=&#34;potato/a/b/c/d/e/f/potat.jpg&#34;alt=&#34;A potato&#34;/&gt;
+</code></pre><p>Oops! <code>&lt;imagesrc</code> is not a valid HTML tag.</p>
+<p>In the time this blog post was written, I stopped stripping newlines because it cost me so much trouble. Here&rsquo;s another example it would break on:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>&lt;<span style="color:#f92672">p</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>10 apples are
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>&lt; <span style="color:#f92672">than</span> <span style="color:#a6e22e">20</span> <span style="color:#a6e22e">apples</span> <span style="color:#a6e22e">because</span> <span style="color:#a6e22e">10</span> <span style="color:#960050;background-color:#1e0010">&lt;</span> <span style="color:#a6e22e">20</span><span style="color:#960050;background-color:#1e0010">.</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span><span style="color:#960050;background-color:#1e0010">&lt;/</span><span style="color:#a6e22e">p</span>&gt;
+</span></span></code></pre></div><p>This gets minified to:</p>
+<pre tabindex="0"><code>&lt;p&gt;
+10 apples are&lt; than 20 apples because 10 &lt; 20.&lt;/p&gt;
+</code></pre><p>Oops! There is a &ldquo;are&lt;&rdquo; when it should have been &ldquo;are\n&lt;&rdquo;, the line break is important for textareas.</p>
+<p>In general, this is a classic example of why <a href="https://stackoverflow.com/a/1732454">you can&rsquo;t parse HTML with regexes</a>. Your author fell into this trap and had to bail out.</p>
+<p>Personally, I&rsquo;m looking to switch to <a href="https://github.com/tdewolff/minify">tdewolff&rsquo;s minifier</a>. But I haven&rsquo;t had time to do it yet, and the savings seem minimal (about 40 or so bytes)</p>
+<h3 id="f2-thoughts-aka-rants-about-go">F2. Thoughts (aka rants) about Go</h3>
+<p>Every <a href="https://fasterthanli.me/articles/some-mistakes-rust-doesnt-catch">blog post involving Go has to have one</a>, right? In my case, my big issue with Go is their inflexible build system.</p>
+<p>Basically, I wanted to put my Go files in a nested directory and compile it there from my root directory. The command to do this is <code>go build cmd/build_template</code>, which builds the <code>main.go</code> file in that directory. First off, it took me an hour to figure that out, since the fact that <code>go build</code> can build arbitrary directories isn&rsquo;t advertised that often. Then, Go insists that I create a <code>go.mod</code> file in my root directory, which I really didn&rsquo;t want to do, since my project is NOT a Go project, but eventually I had to relent because there was literally no way to get around this limitation.</p>
+<p>Regarding using Go for build tooling, I enjoyed it! Would do it again. It&rsquo;s defintely more verbose than Python, but the speedup is worth it, and the Go standard library is just as good, if not better, than Python&rsquo;s.</p>
+<h3 id="f3-is-it-worth-increasing-build-time-to-lower-bundle-size">F3. Is it worth increasing build time to lower bundle size?</h3>
+<p>I have <a href="https://github.com/thomastay/wordle-helper/pull/3">an open PR out</a> for myself to consider adopting <a href="https://terser.org/">terser</a>. Terser is an industry standard tool for minifying Javascript files, and it&rsquo;s used by basically every big company except Google. Google has its own optimizer called the Closure compiler, which can compress JS better but at the cost of <a href="https://developers.google.com/closure/compiler/docs/api-tutorial3#dangers">only accepting a subset of Javascript</a>.</p>
+<p>Using terser would decrease the bundle size by 140 bytes gzipped, which is quite significant at a 1.5% decrease in bundle size.</p>
+<p>However, terser is only moderately fast, and it would add ~500ms to the incremental build times.</p>
+<p>Should I add terser to this project as a default build step?</p>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev/blog" target="_blank">More articles</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev" target="_blank">Homepage</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay/hugo-theme-yinyang" target="_blank">Theme</a>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+
+<script>
+  
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>
