@@ -452,8 +452,7 @@ rest zeroes
 18 [21] 3
 18 [64] 3 0 4 0 4 5 0 4 6
 17 [4] 5 5 0 0 3 5 4
-18 [138] 0 5 3 4 0 0 3 3
-17 [3] 3 0 2 2 3
+18 [138] 0 5 3 4
 </code></pre><p><em>The numbers in brackets are fixed length ints, and are not part of the codelengths</em></p>
 <p>The last thing to specify is how we should represent the codes 0-18. A naive implementation would be to represent them as fixed 5 bit ints, but notice that in our sample above, some codes occur more frequently than others. Wouldn&rsquo;t it be nice to compress those more frequent codes into a shorter number of bits? Oh wait, that&rsquo;s exactly what a Huffman code is, and we&rsquo;ve already written all the machinery to wrangle Huffman codes.</p>
 <p>So, gzip represents the codes 0-18 using a second round of Huffman codes. In our example, here&rsquo;s the Huffman table for the codelengths:</p>
