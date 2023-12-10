@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Thomas Tay&#39;s blog</title>
-    <link>https://ttay.me/blog/</link>
+    <link>https://thomastay.dev/blog/</link>
     <description>Recent content on Thomas Tay&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://ttay.me/blog/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language><atom:link href="https://thomastay.dev/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!</title>
-      <link>https://ttay.me/blog/decompressing_gzip_2/</link>
+      <link>https://thomastay.dev/blog/decompressing_gzip_2/</link>
       <pubDate>Fri, 01 Dec 2023 03:00:59 -0700</pubDate>
       
-      <guid>https://ttay.me/blog/decompressing_gzip_2/</guid>
+      <guid>https://thomastay.dev/blog/decompressing_gzip_2/</guid>
       <description>Part 1 here: Link to part 1
 Let&amp;rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&amp;rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
@@ -20,70 +20,70 @@ $ echo &amp;#34;hector the frantic father on an anchor or a rare fat cat sat on 
     
     <item>
       <title>Domain Moved</title>
-      <link>https://ttay.me/blog/domain-moved-1/</link>
+      <link>https://thomastay.dev/blog/domain-moved-1/</link>
       <pubDate>Tue, 21 Mar 2023 14:43:03 +0800</pubDate>
       
-      <guid>https://ttay.me/blog/domain-moved-1/</guid>
+      <guid>https://thomastay.dev/blog/domain-moved-1/</guid>
       <description>I&amp;rsquo;ve moved from ttay.me to thomastay.dev, my new domain! I accidentally let the old one expire and now they&amp;rsquo;re charging me $70 to recover it&amp;hellip; for a hobby domain that&amp;rsquo;s too much, man.
 Hopefully this one will be better, anyway, as it has my name in it.</description>
     </item>
     
     <item>
       <title>Why the Wheel Appeal</title>
-      <link>https://ttay.me/blog/why-the-wheel-appeal/</link>
+      <link>https://thomastay.dev/blog/why-the-wheel-appeal/</link>
       <pubDate>Sat, 11 Feb 2023 01:00:40 -0800</pubDate>
       
-      <guid>https://ttay.me/blog/why-the-wheel-appeal/</guid>
+      <guid>https://thomastay.dev/blog/why-the-wheel-appeal/</guid>
       <description>I don&amp;rsquo;t understand why the Wheel trading strategy is so popular on Reddit. Am I missing something? This post is a semi coherent ramble where I try and figure out why, oh why, is the wheel so heavily promoted on Reddit.
 What is the Wheel? Put simply, the Wheel is a covered call strategy. That&amp;rsquo;s all it is. Really. Nothing more. A strategy so simple that, by the way, it is literally Chapter 2 of the Options Bible, Options as a Strategic Investment.</description>
     </item>
     
     <item>
       <title>How I Made Wordle Helper</title>
-      <link>https://ttay.me/blog/how-i-made-wordle-helper/</link>
+      <link>https://thomastay.dev/blog/how-i-made-wordle-helper/</link>
       <pubDate>Tue, 22 Feb 2022 18:16:00 -0800</pubDate>
       
-      <guid>https://ttay.me/blog/how-i-made-wordle-helper/</guid>
+      <guid>https://thomastay.dev/blog/how-i-made-wordle-helper/</guid>
       <description>I recently made a web app that helps you play Wordle, everyone&amp;rsquo;s favorite word game. In case you haven&amp;rsquo;t heard of it, Wordle is a game where you try and guess a 5 letter word in 6 tries (just Google it!)
 Click here to go to my website and try it out. I thought it might be worth sharing the engineering of how I designed, wrote and published this app. Plenty of people have written much better wordle solvers than mine, using cooler techniques like information theory, unlike my very naive heuristic.</description>
     </item>
     
     <item>
       <title>100% Reliable and Fast</title>
-      <link>https://ttay.me/blog/100-reliable-and-fast/</link>
+      <link>https://thomastay.dev/blog/100-reliable-and-fast/</link>
       <pubDate>Sun, 30 Jan 2022 19:31:48 +0800</pubDate>
       
-      <guid>https://ttay.me/blog/100-reliable-and-fast/</guid>
+      <guid>https://thomastay.dev/blog/100-reliable-and-fast/</guid>
       <description>I work on a front end project which has two Git repositories, three completely different build systems, five languages, over 10,000 files and 10 million lines of code. It&amp;rsquo;s been built over six years, with the effort over at least a thousand engineers. At this scale, IDE&amp;rsquo;s just can&amp;rsquo;t work effectively.
 For instance, Jump to Definition (F12 in vscode) mostly works, except when navigating to a concrete implementation of an interface injected ten files away.</description>
     </item>
     
     <item>
       <title>A Computer&#39;s no</title>
-      <link>https://ttay.me/blog/a_computers_no/</link>
+      <link>https://thomastay.dev/blog/a_computers_no/</link>
       <pubDate>Mon, 27 Dec 2021 17:55:44 -0800</pubDate>
       
-      <guid>https://ttay.me/blog/a_computers_no/</guid>
+      <guid>https://thomastay.dev/blog/a_computers_no/</guid>
       <description>A Computer&amp;rsquo;s No A computer&amp;rsquo;s No is the most powerful answer for code quality that has ever existed. Unlike the human No, it cannot be bought, bargained, or bullied into submission. If a computer says No, that is the end of it; we as the soft pliable humans simply have to work around it.
 Memory The original Apollo guidance computer fit into x bytes. The hard work of many dozens of engineers, squeezing their code into the very last bit.</description>
     </item>
     
     <item>
       <title>I made x86 flags</title>
-      <link>https://ttay.me/blog/i_made_x86_flags/</link>
+      <link>https://thomastay.dev/blog/i_made_x86_flags/</link>
       <pubDate>Sat, 06 Nov 2021 12:16:51 -0700</pubDate>
       
-      <guid>https://ttay.me/blog/i_made_x86_flags/</guid>
+      <guid>https://thomastay.dev/blog/i_made_x86_flags/</guid>
       <description>This is going to be a tiny blog post to say that I&amp;rsquo;ve made a tiny site (microsite?) that&amp;rsquo;s all about x86 flags. I&amp;rsquo;m learning about x86 assembly, SIMD, and microarch these few weeks.
 The eflags register is really confusing, so i made a tiny simulator to help me remember which flag is which. Particularly the carry and overflow flags, cos f**k whoever thought that was a good way to name their flags.</description>
     </item>
     
     <item>
       <title>Decompressing a gzip file by hand</title>
-      <link>https://ttay.me/blog/gzip_investigations/</link>
+      <link>https://thomastay.dev/blog/gzip_investigations/</link>
       <pubDate>Sat, 16 Oct 2021 00:03:59 -0700</pubDate>
       
-      <guid>https://ttay.me/blog/gzip_investigations/</guid>
+      <guid>https://thomastay.dev/blog/gzip_investigations/</guid>
       <description>Let&amp;rsquo;s make a gzipped file and see what&amp;rsquo;s in it. We&amp;rsquo;ll keep it simple: just write 8 &amp;lsquo;a&amp;rsquo;s to a file.
 $ echo &amp;#34;aaaaaaaa&amp;#34; &amp;gt; test.out$ xxd test.out00000000: 6161 6161 6161 6161 0a aaaaaaaa. As we can see, our file is 9 bytes long. We have 8 &amp;lsquo;a&amp;rsquo; bytes written, plus a Line Feed (LF) character written at the end.
 Let&amp;rsquo;s make the gzip file now. We&amp;rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about.</description>
@@ -91,30 +91,30 @@ Let&amp;rsquo;s make the gzip file now. We&amp;rsquo;ll do gzip -1, since that w
     
     <item>
       <title>Blub Framework Lifecycle</title>
-      <link>https://ttay.me/blog/blub-framework-lifecycle/</link>
+      <link>https://thomastay.dev/blog/blub-framework-lifecycle/</link>
       <pubDate>Wed, 09 Jun 2021 19:09:23 -0700</pubDate>
       
-      <guid>https://ttay.me/blog/blub-framework-lifecycle/</guid>
+      <guid>https://thomastay.dev/blog/blub-framework-lifecycle/</guid>
       <description>Warning: snark
 Blub framework is hacked together in a weekend. It is lean and mean, and solves all the problems of Blub domain. Pre-Blub users look at Blub, think it&amp;rsquo;s really cool but doesn&amp;rsquo;t have any libraries, so they pass. Blub framework is noticed by smart people, who begin building cool, interesting solutions with it. Blub now has its own website and learning guides. `${UNICORN_VIRAL_STARTUP}` adopts Blub, and now everyone pays attention.</description>
     </item>
     
     <item>
       <title>Brian Harry on Resource Management in .NET (2000)</title>
-      <link>https://ttay.me/blog/brada_on_resource_management/</link>
+      <link>https://thomastay.dev/blog/brada_on_resource_management/</link>
       <pubDate>Mon, 17 Aug 2020 22:47:39 +0800</pubDate>
       
-      <guid>https://ttay.me/blog/brada_on_resource_management/</guid>
+      <guid>https://thomastay.dev/blog/brada_on_resource_management/</guid>
       <description>The following email is written by Brian Harry and published by Brad Abrams (brada), written in 2000. It&amp;rsquo;s about the .NET runtime (C#, F#, VB), and why they decided to go with Garbage collection instead of sticking with reference counting. Worth a read if you&amp;rsquo;re interested in the debate between GC systems vs Ref Counted systems.
 The question is all the more relevant these days (2020), with Ref Counted systems in vogue and GC out of fashion.</description>
     </item>
     
     <item>
       <title>Causal Messaging by example</title>
-      <link>https://ttay.me/blog/causal_messaging/</link>
+      <link>https://thomastay.dev/blog/causal_messaging/</link>
       <pubDate>Fri, 17 Jul 2020 12:00:00 +0800</pubDate>
       
-      <guid>https://ttay.me/blog/causal_messaging/</guid>
+      <guid>https://thomastay.dev/blog/causal_messaging/</guid>
       <description>When people first build a distributed system, they normally think of FIFO messaging, or maybe they build their system to be linearizable. But there&amp;rsquo;s an in-betweener, and that&amp;rsquo;s causal messaging.
 Instead of giving you the definition, which is pretty mathematical, I&amp;rsquo;ll let you read it on your own, and I&amp;rsquo;ll give a real life example that you can hopefully grok.
 Causal messaging is pretty important for some types of distributed systems.</description>
@@ -122,19 +122,19 @@ Causal messaging is pretty important for some types of distributed systems.</des
     
     <item>
       <title>Pony actors don&#39;t have (their own) stacks</title>
-      <link>https://ttay.me/blog/pony_actors_no_stacks/</link>
+      <link>https://thomastay.dev/blog/pony_actors_no_stacks/</link>
       <pubDate>Fri, 12 Jun 2020 12:00:00 +0800</pubDate>
       
-      <guid>https://ttay.me/blog/pony_actors_no_stacks/</guid>
+      <guid>https://thomastay.dev/blog/pony_actors_no_stacks/</guid>
       <description>In this short article I&amp;rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir/Erlang processes have a 1.2KB combined stack and heap. But surprisingly, Pony&amp;rsquo;s actors don&amp;rsquo;t have their own stacks!</description>
     </item>
     
     <item>
       <title>Lessons learnt from optimizing a graph algorithm in F sharp</title>
-      <link>https://ttay.me/blog/optimizing_graph_algo_fsharp/</link>
+      <link>https://thomastay.dev/blog/optimizing_graph_algo_fsharp/</link>
       <pubDate>Tue, 02 Jun 2020 22:12:51 -0600</pubDate>
       
-      <guid>https://ttay.me/blog/optimizing_graph_algo_fsharp/</guid>
+      <guid>https://thomastay.dev/blog/optimizing_graph_algo_fsharp/</guid>
       <description>In this article I&amp;rsquo;m going to share how I optimized a graph algorithms interview question down from 58s down to 1.2s, nearly a 50x improvement! TLDR: Use the right data structures, exploit cache efficiency, and do less work.
 For those unaware, F# is a functional-first language that runs on the .NET platform (think C#). Despite the title of the article, very little of the optimization techniques applies solely to F#, and so I have intentionally wrote this article to make it comprehensible even if you don&amp;rsquo;t understand a line of code in the article.</description>
     </item>
