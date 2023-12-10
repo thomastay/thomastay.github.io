@@ -12,7 +12,8 @@
       <pubDate>Fri, 01 Dec 2023 03:00:59 -0700</pubDate>
       
       <guid>https://ttay.me/blog/decompressing_gzip_2/</guid>
-      <description>Let&amp;rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&amp;rsquo;s decode the decompressed huffman codes too.
+      <description>Part 1 here: Link to part 1
+Let&amp;rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&amp;rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
 $ echo &amp;#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&amp;#34; &amp;gt; test-huff.txt$ xxd test-huff.txt00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on00000040: 7468 6520 7261 6e63 680a the ranch.</description>
     </item>

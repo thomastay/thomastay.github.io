@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!",
       "headline" : "Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!",
-      "description" : "Let\u0026rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let\u0026rsquo;s decode the decompressed huffman codes too.\nStart by writing some data to disk:\n$ echo \u0026#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch\u0026#34; \u0026gt; test-huff.txt\r$ xxd test-huff.txt\r00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant\r00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an\r00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare\r00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on\r00000040: 7468 6520 7261 6e63 680a the ranch.",
+      "description" : "Part 1 here: Link to part 1\nLet\u0026rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let\u0026rsquo;s decode the decompressed huffman codes too.\nStart by writing some data to disk:\n$ echo \u0026#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch\u0026#34; \u0026gt; test-huff.txt\r$ xxd test-huff.txt\r00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant\r00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an\r00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare\r00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on\r00000040: 7468 6520 7261 6e63 680a the ranch.",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -40,10 +40,12 @@
 <title>Decompressing a gzip file by hand (sorta), part 2: Now with Huffman! - Thomas Tay&#39;s blog</title>
   <meta property="og:title" content="Decompressing a gzip file by hand (sorta), part 2: Now with Huffman! - Thomas Tay&#39;s blog" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
+  <meta property="og:description" content="Part 1 here: Link to part 1
+Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
 $ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt$ xxd test-huff.txt00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on00000040: 7468 6520 7261 6e63 680a the ranch." />
-  <meta name="description" content="Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
+  <meta name="description" content="Part 1 here: Link to part 1
+Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
 $ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt$ xxd test-huff.txt00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on00000040: 7468 6520 7261 6e63 680a the ranch." />
   <meta property="og:locale" content="en-us" />
@@ -87,7 +89,8 @@ $ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the 
 
         <div class="post-content markdown-body">
           
-          <p>Let&rsquo;s decompress a gzip file by hand, just <a href="/blog/gzip_investigations">like we did last time in part 1</a>, but this time let&rsquo;s decode the decompressed huffman codes too.</p>
+          <p><em>Part 1 here:</em> <a href="/blog/gzip_investigations">Link to part 1</a></p>
+<p>Let&rsquo;s decompress a gzip file by hand, just <a href="/blog/gzip_investigations">like we did last time in part 1</a>, but this time let&rsquo;s decode the decompressed huffman codes too.</p>
 <p>Start by writing some data to disk:</p>
 <pre tabindex="0"><code>$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt
 $ xxd test-huff.txt
@@ -108,7 +111,11 @@ $ xxd test-huff.txt.gz
 00000030: c6ca e823 7425 96b8 fb0f 2c7a 0967 8393  ...#t%....,z.g..
 00000040: 2873 8710 9543 11ee 75ad cc51 237d 0fc7  (s...C..u..Q#}..
 00000050: 9797 d64a 0000 00                        ...J...
-</code></pre><h2 id="gzip-specific-info">gzip specific info</h2>
+</code></pre><p>To give you a taste of what the decoding is going to look like, here&rsquo;s the first line of the decoded gzip stream:</p>
+<pre tabindex="0"><code>0101 1001 0001 1101 00111 010 000 1101 0101 1001 000
+h    e    c    t    o     r   &#39; &#39;   t    h  e    &#39; &#39; 
+</code></pre><p>Read on to find out more!</p>
+<h2 id="gzip-specific-info">gzip specific info</h2>
 <p>The first few bytes are quite straightforward:</p>
 <ol>
 <li><code>1f8b</code> - &ldquo;magic&rdquo;, hardcoded gzip header</li>
@@ -136,7 +143,7 @@ count 259 12 16         ! 1100 01011 00010
 [... additional output trimmed. See appendix for the full output]
 </code></pre><p>The 3 bits of the gzip bitstream tells us that this is the only block in the bitstream, and that it is compressed using dynamic Huffman codes.</p>
 <p>We&rsquo;re not going to be inspecting the bitstream too carefully, but just so we&rsquo;re on the same page, this is the bitstream of the DEFLATE data, without the headers, CRC and Length bytes.
-Remember that the bits are packed LSB to MSB, and any integers are interpreted in little endian format (<strong>except Huffman codes, which are packed MSB to LSB</strong>). <code>xxd</code> prints bits from MSB to LSB, so you have to read the bitstream backwards. Check part 1 for the details.</p>
+Remember that the bits are packed LSB to MSB, and any integers are interpreted in little endian format (<strong>except Huffman codes, which are packed MSB to LSB</strong>). <code>xxd</code> prints bits from MSB to LSB, so you have to read the bitstream backwards. Check <a href="/blog/gzip_investigations">part 1</a> for the details.</p>
 <pre tabindex="0"><code>$ xxd -s 24 -l 55 -b .\test-huff.txt.gz
 00000018: 00010101 10001011 01000001 00001010 00000000 00110001  ..A..1
 0000001e: 00001100 00000010 11101111 11111011 00001010 10111111  ......
@@ -507,7 +514,7 @@ rest zeroes
 </tr>
 </tbody>
 </table>
-<p>These second-round code lengths (code lengths of code lengths) are then encoded as fixed 3 bit integers, and laid out in a fixed 16 element array.</p>
+<p>These second-round code lengths (code lengths of code lengths) are then encoded as fixed 3 bit integers, and laid out in a fixed 18 element array.</p>
 <pre tabindex="0"><code>2,0,4,2,3,3,4,0
 0,0,0,0,0,0,0,0
 0,4,4
@@ -517,7 +524,7 @@ rest zeroes
 <pre tabindex="0"><code>0,4,4,2,0,0,0,4
 0,3,0,3,0,2,0,4
 0,0,0
-</code></pre><p>The non-zero length of the array is 16 and it&rsquo;s encoded separately in the block header. So we can just drop the last 3 elements and get this bit-level encoding:</p>
+</code></pre><p>The non-zero length of the array is 16 (the last 3 elts are zeroes) and the non-zero length is encoded separately in the block header. So we can just drop the last 3 elements and get this bit-level encoding:</p>
 <pre tabindex="0"><code>000 100 100 010 000 000 000 100
 000 011 000 011 000 010 000 100
 </code></pre><p>Since these are <strong>not</strong> themselves Huffman codes, but rather fixed length 3 bit integers, they are packed LSB to MSB just like every other data entity. This point is a bit confusing but that&rsquo;s how it works I guess.
@@ -629,8 +636,23 @@ MATCH 4 3 (n an)
 </code></pre><p>Here we get into the first interesting match. Notice how the match looks back 3 letters, but has a length of 4? This is gzip&rsquo;s way of representing a repeating element (in this case, <em>n</em>) within the match itself.</p>
 <p>To decode this, we need to start repeating part of the <em>decoded</em> stream itself. Again, confusing at first glance, but it makes it really concise to represent extremely long repeated strings.</p>
 <p>For instance, the string <em>bananananana</em> could be represented as <code>b, a, n, match 9 2</code>.</p>
-<p>Let&rsquo;s finish the rest of the code:</p>
-<pre tabindex="0"><code>0001 0101 111 00 110       001 110
+<p>Let&rsquo;s finish the rest of the code, putting it all together:</p>
+<pre tabindex="0"><code>0101 1001 0001 1101 00111 010 000 1101 0101 1001 000
+h    e    c    t    o     r   &#39; &#39;   t    h  e    &#39; &#39; 
+
+01011 010 100 11011 1101 111111 0001 000 01011 100
+f     r   a   n     t    i      c    &#39; &#39; f     a   
+
+01 011 110
+MATCH 3 14 (the)
+
+010 000 00111 11011 000 100
+r   &#39; &#39; o     n     &#39; &#39; a
+
+001 0011
+MATCH 4 3 (n an)
+
+0001 0101 111 00 110       001 110
 c    h    MATCH 3 32 (or ) MATCH 3 3 (or )
 
 100 000 010 100 010 1001
@@ -685,9 +707,9 @@ Some observations:</p>
 <li>I also want to extend this series to LZ4 decompression, which I think is a criminally underappreciated compression library</li>
 <li>I probably <em>wont</em> do zstd for now, since I still have yet to understand tANS encoding, and why it&rsquo;s needed. From the simple example we just did, the match table didn&rsquo;t seem that big, and zstd only uses tANS for match codes. It still uses Huffman for literal codes. So I don&rsquo;t get how this really improves compression.</li>
 </ol>
-<p>If you see any mistakes, <a href="https://github.com/thomastay/personal-blog/issues">please correct them on Github</a>, or email me at <code>thomastayac</code>. Google mail.</p>
+<p>If you see any mistakes, <a href="https://github.com/thomastay/personal-blog/issues">please correct them on Github</a>, or email me at <a href="mailto:thomastayac@gmail.com">thomastayac@gmail.com</a></p>
 <h2 id="personal-ramble">Personal ramble</h2>
-<p>Thanks so much for reading this far, I really appreciate it. Part 1 was written two years ago, and I&rsquo;ve been wanting to write Part 2 for the longest time. During this time, my college girlfriend of 5 years moved in with me, which was one of the happiest times of my life. Sadly, no good things are meant to last, and we broke up earlier this year in March.</p>
+<p>Thanks so much for reading this far, I really appreciate it. Part 1 was written two years ago, and I&rsquo;ve been wanting to write Part 2 for the longest time. During this time, my college girlfriend of 5 years moved to be with me, which was one of the happiest times of my life. Sadly, no good things are meant to last, and we broke up earlier this year in March.</p>
 <p>I guess writing this part 2 has been part of my healing process, coming back to the things I love the most (the nuts and bolts of coding) and trying to discover who I was before I met her. So thanks for being with me on this journey.</p>
 <h2 id="references">References</h2>
 <p>I found these articles extremely helpful, in no particular order:</p>
