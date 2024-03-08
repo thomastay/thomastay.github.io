@@ -2,6 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://thomastay.dev/blog/how-i-built-a-telegram-summarization-bot/</loc>
+    <lastmod>2024-02-29T11:31:00+08:00</lastmod>
+  </url><url>
+    <loc>https://thomastay.dev/blog/</loc>
+    <lastmod>2024-02-29T11:31:00+08:00</lastmod>
+  </url><url>
     <loc>https://thomastay.dev/blog/decompressing_gzip_2/</loc>
     <lastmod>2023-12-01T03:00:59-07:00</lastmod>
   </url><url>
@@ -44,7 +50,5 @@
     <loc>https://thomastay.dev/blog/categories/</loc>
   </url><url>
     <loc>https://thomastay.dev/blog/tags/</loc>
-  </url><url>
-    <loc>https://thomastay.dev/blog/</loc>
   </url>
 </urlset>

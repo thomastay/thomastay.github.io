@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.111.3">
+  <meta name="generator" content="Hugo 0.123.4">
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!",
       "headline" : "Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!",
-      "description" : "Part 1 here: Link to part 1\nLet\u0026rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let\u0026rsquo;s decode the decompressed huffman codes too.\nStart by writing some data to disk:\n$ echo \u0026#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch\u0026#34; \u0026gt; test-huff.txt\r$ xxd test-huff.txt\r00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant\r00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an\r00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare\r00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on\r00000040: 7468 6520 7261 6e63 680a the ranch.",
+      "description" : "Part 1 here: Link to part 1\nLet\u0026rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let\u0026rsquo;s decode the decompressed huffman codes too.\nStart by writing some data to disk:\n$ echo \u0026#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch\u0026#34; \u0026gt; test-huff.txt $ xxd test-huff.txt 00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant 00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an 00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare 00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on 00000040: 7468 6520 7261 6e63 680a the ranch.",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -43,11 +43,11 @@
   <meta property="og:description" content="Part 1 here: Link to part 1
 Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
-$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt$ xxd test-huff.txt00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on00000040: 7468 6520 7261 6e63 680a the ranch." />
+$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt $ xxd test-huff.txt 00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant 00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an 00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare 00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on 00000040: 7468 6520 7261 6e63 680a the ranch." />
   <meta name="description" content="Part 1 here: Link to part 1
 Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
-$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt$ xxd test-huff.txt00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on00000040: 7468 6520 7261 6e63 680a the ranch." />
+$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt $ xxd test-huff.txt 00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant 00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an 00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare 00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on 00000040: 7468 6520 7261 6e63 680a the ranch." />
   <meta property="og:locale" content="en-us" />
 
 
@@ -84,22 +84,7 @@ $ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the 
         </div>
         <header class="post-header">
           <h1 class="post-title">Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!</h1>
-          <div class="row post-desc">
-            <div class="col-xs-6">
-              
-              <time class="post-date" datetime="2023-12-01 03:00:59 -0700">
-                01 Dec 2023
-              </time>
-              
-            </div>
-            <div class="col-xs-6">
-              
-              <div class="post-author">
-                <a target="_blank" href="https://thomastay.dev/">@Thomas</a>
-              </div>
-              
-            </div>
-          </div>
+          
         </header>
 
         <div class="post-content markdown-body">

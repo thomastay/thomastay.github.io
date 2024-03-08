@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.123.4">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://thomastay.dev/blog/how-i-built-a-telegram-summarization-bot/" />
+  <link rel="canonical" href="https://thomastay.dev/blog/how-i-built-a-telegram-summarization-bot/" /><link rel="apple-touch-icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="shortcut" href="/assets/img/favicon-32x32.png" /><link rel="alternate" type="application/atom+xml" href="https://thomastay.dev/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/thomastay.dev\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "How I Built a Telegram Summarization Bot",
+      "headline" : "How I Built a Telegram Summarization Bot",
+      "description" : "I\u0026rsquo;m excited to share a side project I\u0026rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.\nWhy?\nIdeal for breaking news, saving time compared to reading the entire article Helps you in deciding whether to read the full article Acts as a Table of Contents for longer articles to guide you as you read Here\u0026rsquo;s a video demonstration of the bot in action:\nYour browser does not support the video tag.",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2024",
+      "datePublished": "2024-02-29 11:31:00 \u002b0800 \u002b08",
+      "dateModified" : "2024-02-29 11:31:00 \u002b0800 \u002b08",
+      "url" : "https:\/\/thomastay.dev\/blog\/how-i-built-a-telegram-summarization-bot\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>How I Built a Telegram Summarization Bot - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="How I Built a Telegram Summarization Bot - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="I&rsquo;m excited to share a side project I&rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.
+Why?
+Ideal for breaking news, saving time compared to reading the entire article Helps you in deciding whether to read the full article Acts as a Table of Contents for longer articles to guide you as you read Here&rsquo;s a video demonstration of the bot in action:
+Your browser does not support the video tag." />
+  <meta name="description" content="I&rsquo;m excited to share a side project I&rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.
+Why?
+Ideal for breaking news, saving time compared to reading the entire article Helps you in deciding whether to read the full article Acts as a Table of Contents for longer articles to guide you as you read Here&rsquo;s a video demonstration of the bot in action:
+Your browser does not support the video tag." />
+  <meta property="og:locale" content="en-us" />
+
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
+  <link rel="stylesheet" href="/blog/css/index.min.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">How I Built a Telegram Summarization Bot</h1>
+          
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>I&rsquo;m excited to share a side project I&rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.</p>
+<p>Why?</p>
+<ul>
+<li>Ideal for breaking news, saving time compared to reading the entire article</li>
+<li>Helps you in deciding whether to read the full article</li>
+<li>Acts as a Table of Contents for longer articles to guide you as you read</li>
+</ul>
+<p>Here&rsquo;s a video demonstration of the bot in action:</p>
+
+<div style="max-width: 60%; margin: 0 auto;">
+<video style="width: 100%" autoplay controls>
+  <source src="Screen%20Recording%202024-02-29%20at%2011.53.09%20AM.mov" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+</div>
+
+<p>The bot works on articles of any length. For example, it can summarize <a href="https://danluu.com/cocktail-ideas/">danluu&rsquo;s article on cocktail ideas</a>, which is about 6.6k words, in a few seconds.</p>
+
+<div style="max-width: 60%; margin: 0 auto;">
+<video style="width: 100%" autoplay controls>
+  <source src="Screen%20Recording%202024-02-29%20at%202.44.15%20PM.mov" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+</div>
+
+<p>I primarily use this bot to summarize news articles, but it also works well for personal blog posts, technical articles, and opinion pieces.</p>
+<h1 id="summarization">Summarization</h1>
+<p>For summarization, I use Mixtral, an open-source model that is cheaper and better than GPT3.5. I prompt Mixtral to produce a bullet point summary using a specific prompt that includes examples of good summaries. Here&rsquo;s an example of the prompt:</p>
+<blockquote>
+<p>Summarize the previous text in 5 bullet points. Each bullet point is a single sentence of around 30 words. Each sentence should be plain, at a 9th grade level. Include as many topics as possible, make every word count. Start every bullet point with a dash &lsquo;-&rsquo; and stop once you are done. Your bullet points should answer the 5W1H: &lsquo;Who&rsquo;, &lsquo;What&rsquo;, &lsquo;Where&rsquo;, &lsquo;When&rsquo;, &lsquo;Why&rsquo; and &lsquo;How&rsquo;. Example:</p>
+<ul>
+<li>Japanese Yakuza leader accused of involvement in trafficking nuclear materials</li>
+<li>Small plane carrying two people lands safely after door falls off midflight over Stiglmeier Park in Cheektowaga, New York.</li>
+<li>Google apologizes after new Gemini AI refuses to show pictures, achievements of White people</li>
+</ul>
+</blockquote>
+<p>Mixtral is hosted by several providers, so I recommend shopping around to find the best one for your needs. I use Lepton as my API provider because it offers quick response times for low prices, but I&rsquo;m considering switching to Groq, which uses custom chips instead of GPUs to serve Mixtral.
+For my bot, I pay approximately $1.50/mo to Lepton for their API for a thousand articles. That&rsquo;s with one user. On average each article has about 2750 tokens of input and 250 tokens of output.</p>
+<p>Here&rsquo;s a chart showing the response time vs price for various providers, from <a href="https://artificialanalysis.ai/models/mixtral-8x7b-instruct/hosts?parallel_queries=single&amp;prompt_length=long">artificialanalysis</a>. The chart isn&rsquo;t that accurate: Lepton is charging me $0.5 / M tokens, not $0.35. But still, Lepton has been pretty good in the time I&rsquo;ve used it.</p>
+<p><img src="total-response-time-vs-price.png" alt="Lepton analysis"></p>
+<p><em>Chart was taken on Feb 29</em></p>
+<h2 id="summarizing-longer-articles">Summarizing longer articles</h2>
+<p>Mixtral has a large context length of approximately 25k words or 32k tokens, but it produces better summaries when fed shorter articles. To summarize longer articles, I use a chunking strategy where I chop the text into pieces, summarize each piece into one paragraph, then summarize the paragraphs. This results in a more comprehensive summary that covers more broad points about the article.</p>
+<p>For example, here&rsquo;s a comparison of two summaries of <a href="https://danluu.com/diseconomies-scale/">danluu&rsquo;s article on diseconomies of scale</a>:</p>
+<p><strong>Summary 1 (long context)</strong></p>
+<blockquote>
+<ul>
+<li>Facebook allowed a large-scale pedophilic community to thrive on Instagram, with its recommendation systems recommending accounts with underage sex content.</li>
+<li>Instagram&rsquo;s search bar suggested terms associated with child sexual exploitation, and even glancing contact with accounts with names like Incest Toddlers was enough to trigger Instagram to begin pushing users to connect with them.</li>
+<li>The company was aware of the problem but failed to take significant action, with the head of Indian Public Policy blocking efforts to designate certain accounts as hate figures.</li>
+<li>The company&rsquo;s leadership, including CEO Mark Zuckerberg, downplayed the issue, stating that Facebook wasn&rsquo;t driving societies into contexts where they can&rsquo;t trust each other.</li>
+<li>Researchers within Facebook found that Instagram was making body image issues worse for one in three teen girls, with only 1% of users reporting objectionable content and Instagram taking action in 2% of those cases.</li>
+</ul>
+</blockquote>
+<p><strong>Summary 2 (chunked)</strong></p>
+<blockquote>
+<ul>
+<li>Larger tech companies like Google have higher rates of scams, spam, and fraudulent content in their search results, with worse support and lower chances of reinstatement after bans.</li>
+<li>Smaller companies like Craigslist often have better moderation and spam filtering due to hands-on approaches, while larger companies rely on algorithms that can be gamed.</li>
+<li>Facebook is under fire for its flawed user banning process, with 10% of the author&rsquo;s acquaintances getting banned incorrectly, due to lack of systematic effort to track or decrease false positives.</li>
+<li>Economies of scale don&rsquo;t always mean better results for larger companies, as seen in Amazon&rsquo;s scams and counterfeit items, and Facebook&rsquo;s failure to combat misinformation and extremism.</li>
+<li>Theoretical arguments about diseconomies of scale often don&rsquo;t hold up in reality, and it&rsquo;s important to look beyond</li>
+</ul>
+</blockquote>
+<p>I implemented a very basic chunking strategy to summarize long articles of over 3000 words. I chop the text into pieces, summarize each piece into one paragraph, then summarize the paragraphs. There are 7 sections in total that got summarized into 7 paragraphs, and the bullet point summary gets made summarizing those paragraphs. Here&rsquo;s the first chunked summary paragraph of Daniel&rsquo;s article that covers the first section of his essay.</p>
+<blockquote>
+<p>The article discusses how larger tech platforms, like Google, have more resources but also a higher rate of scams, spam, and fraudulent content. It mentions that support becomes worse as the platform size increases, and account reinstatement becomes less likely in the event of an incorrect suspension or ban. The author argues that many things get worse as platforms get bigger, and provides examples of Twitter polls and comparisons to Americans&rsquo; beliefs about vaccines and the moon landing. Zuckerberg&rsquo;s claim that breaking up big tech companies would make content moderation issues worse is also mentioned, along with the argument that economies of scale work well for moderation and spam filtering. However, the article provides examples of smaller companies having better results in moderation and spam filtering than larger ones. The author encourages looking at what gets better and worse as companies become larger, rather than assuming that everything will get better with scale.</p>
+</blockquote>
+<p>While there is no shortage of complicated algorithms out there offering complex semantic chunking, I found that the naive method of just splitting the text into evenly-sized chunks at line breaks was good enough. If you&rsquo;re interested, I have links in the references to more complex algorithms that do things like topic segmentation and topic modeling.</p>
+<h1 id="how-useful-is-summarization">How useful is summarization?</h1>
+<p>While summarization can be useful for quickly understanding the main points of an article, I found that it wasn&rsquo;t always what I wanted. What I really want is something that allows me to transfer knowledge into my brain faster. Summaries aren&rsquo;t information dense enough for that, and if the article is well written, there isn&rsquo;t much else you can do to just read it.</p>
+<p>That said, summaries can be useful for articles that contain a lot of fluff or for answering specific questions that are buried in a textbook.
+Summaries are good for case #1 since they cut through fluff amazingly. But for case #2, I recommend using a Q&amp;A tool like <a href="https://pdf.ai/">https://pdf.ai/</a>.
+<em>tldr</em> - Summarization is like JPEG for ideas, and if you want a png, you&rsquo;ll be disappointed.</p>
+<h2 id="disagreeing">Disagreeing</h2>
+<p>One interesting feature of the bot is that it can also disagree with articles, which can help you think critically about what you&rsquo;re reading. Here&rsquo;s an example of Mixtral disagreeing with <a href="https://danluu.com/people-matter/">danluu&rsquo;s article on people mattering</a>:</p>
+<blockquote>
+<p>In response to the opinion piece, I believe that there is a balance to be struck between simplifying complex systems and harnessing the unique strengths of individuals. While it&rsquo;s true that treating individuals as fungible can make a system more legible and scalable, it may also result in inefficiencies and the loss of potential outlier returns. However, ignoring the importance of team dynamics and institutional knowledge can lead to disastrous consequences, as seen in examples of entire teams being disbanded and sub-products falling into disrepair. On the other hand, promoting individuals based solely on the number of people they manage can discourage innovation and lead to bureaucratic, unproductive environments. The sweet spot lies in acknowledging and leveraging the unique skills and experiences of each individual, while maintaining a clear, scalable system. By doing so, companies can reap the benefits of both efficiency and creativity.</p>
+</blockquote>
+<p>As you can see, the bot&rsquo;s disagreements are still a work in progress and don&rsquo;t always address the main points of the article, but they can be a useful starting point for thinking critically about what you&rsquo;re reading.</p>
+<p>The problem is that summarization is an in-context task, where all the info that an LLM needs to summarize is already present in the prompt. The AI doesn&rsquo;t have to invent anything new or be creative, and so a fairly dumb AI model would work. Mixtral is actually overkill for summarizing news articles. In my own experiments, I found that quantized 3b models work well enough for the majority of news articles. For reference, Mixtral is about 25x bigger than these models.</p>
+<p>Disagreeing is a creative process. It requires the AI to think and invent new ideas by itself. So you want the smartest AI model on the planet to disagree with you. Exactly like having a yes-man vs a guy who gives you constructive criticism.</p>
+<p>I&rsquo;m trying out different techniques and will post about it once I&rsquo;m done with research, but from initial thoughts it will either be GPT4-Turbo or Claude 3 Opus.</p>
+<p>The problem is that these models are incredibly expensive. Claude 3 Opus would cost ~$0.06 per disagreement, 50x more expensive than Mixtral. Even if you only generate 10 disagreements a day, that&rsquo;s $18 / mo in api costs! 💰💰 Which is why I&rsquo;m working to see if I can get better results from cheaper models.</p>
+<h1 id="infrastructure">Infrastructure</h1>
+<p><em>Disclaimer</em>: this was an experimental project so I decided to use infrastructure that I&rsquo;m not typically accustomed to. I would not recommend this stack - instead, just use Supabase!</p>
+<p>I currently host my summary bot on Azure Functions, which is a great option as it offers a free tier. You receive 1M free function executions per month, which is more than sufficient for a single-user bot. Running the bot as a function provides some nifty features, such as auto-monitoring and tracing.</p>
+<p><img src="functions-invocations.png" alt="Functions invocations">
+I then deploy the app to Azure from a Github action which runs on every push.</p>
+<p>The primary issue with running a chatbot on functions is the cold starts, which can result in a wait of up to 7 seconds if the bot hasn&rsquo;t been used in the past 5 minutes. This is insanely annoying for a 1:1 chatbot since you basically have to send a message and just stare at the screen forever until you get a reply.</p>
+<p>Another annoyance I had with Azure functions is that if your <em>requirements.txt</em> file doesn&rsquo;t contain all the necessary packages, your deployment will just fail with absolutely no warnings. The sort of thing that makes you pull your hair out debugging.</p>
+<p>Also, in order to setup a HTTP triggered Azure function, your function name has to contain &ldquo;http&rdquo; in it. The Azure docs contain absolutely <strong>no</strong> references to this, and you only figure this out after reading mountains of stackoverflow posts.</p>
+<p>Due to these reasons, I&rsquo;m considering moving to hosting my own server soon on an Azure VM. I&rsquo;ve considered Platform as a Service (PaaS) services, but they seem to require more effort than simply hosting a bot on a VM directly. I&rsquo;m curious to know why people use PaaS, so feel free to share your thoughts.</p>
+<p><em>Disclosure: I work for Microsoft</em></p>
+<h2 id="database">Database</h2>
+<p>I use Azure blob &amp; table storage as my database. Yes, really.</p>
+<p>I have a table that stores summaries along with the user ID of the person who generated them. It&rsquo;s keyed on the timestamp of the summary creation and is primarily used for me to review bad summaries and figure out how to improve things.
+<img src="summaries.png" alt="summaries"></p>
+<p>I have a <em>users</em> table that&rsquo;s just me and my friends. When a user sends a message to the summary bot, it first checks to see if the user ID is present in the users table as a form of authentication.
+Invites are sent via invite codes, which I send over DMs on Telegram. Telegram has a feature that allows for the sending of deeplinks to a bot, which I use to trigger the <em>start</em> command on my bot. If the invite code is valid, then I add them to the users table.
+Again, I wouldn&rsquo;t recommend this setup. Use Supabase or even just sqlite to get proper auth / database integration. However, this process is incredibly cost-effective. Blob storage is so cheap that it doesn&rsquo;t even register as a cost on my bill. If you use the cloud sparingly, it can result in significant cost savings.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>Overall, this was a fun and enlightening project to work on. I dedicated about a month to it on weekends, focusing mainly on improving the prompts. The DB + Telegram side was relatively quick to work on, and I essentially hacked it together in a weekend.
+If you&rsquo;re interested in checking out the code, the repository is open source and can be found here: <a href="https://github.com/thomastay/url-summarizer-telegram-bot">URL Summarizer Telegram Bot</a>
+If you&rsquo;d like to try out the bot, feel free to DM me on Twitter for an invite code <a href="https://twitter.com/thomastayac">@thomastayac</a>, or send me an email at <a href="mailto:thomastayc@gmail.com">thomastayc@gmail.com</a>. If there is enough interest, I plan to open this up to others to use. However, the API cost is currently a significant factor in allowing only family and friends access.</p>
+<h1 id="references">References</h1>
+<ol>
+<li><a href="https://openai.com/research/summarizing-books">https://openai.com/research/summarizing-books</a>. This article was my inspiration for the chunking strategy</li>
+<li>Lost in the Middle: How Language Models Use Long Contexts. <a href="https://arxiv.org/abs/2307.03172">https://arxiv.org/abs/2307.03172</a>. This paper explains why LLMs are poor at summarizing articles from long contexts. More advanced LLMs like Gemini 1.5 have supposedly solved this problem, though they didn&rsquo;t say how.</li>
+<li><a href="https://artistdetective.wordpress.com/2017/12/02/how-to-summarize-the-internet/">https://artistdetective.wordpress.com/2017/12/02/how-to-summarize-the-internet/</a></li>
+<li><a href="https://pashpashpash.substack.com/p/tackling-the-challenge-of-document">https://pashpashpash.substack.com/p/tackling-the-challenge-of-document</a></li>
+<li><a href="https://towardsdatascience.com/summarize-podcast-transcripts-and-long-texts-better-with-nlp-and-ai-e04c89d3b2cb">https://towardsdatascience.com/summarize-podcast-transcripts-and-long-texts-better-with-nlp-and-ai-e04c89d3b2cb</a></li>
+<li><a href="https://github.com/FullStackRetrieval-com/RetrievalTutorials/blob/main/5_Levels_Of_Text_Splitting.ipynb">https://github.com/FullStackRetrieval-com/RetrievalTutorials/blob/main/5_Levels_Of_Text_Splitting.ipynb</a></li>
+</ol>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev/blog" target="_blank">More articles</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev" target="_blank">Homepage</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay/hugo-theme-yinyang" target="_blank">Theme</a>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+
+<script>
+  
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>
