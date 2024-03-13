@@ -6,3 +6,4 @@ _site/
 *.out
 *.psd
 ionicons-2.0.1/
+.DS_Store
