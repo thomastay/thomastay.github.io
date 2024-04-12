@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "How I Built a Telegram Summarization Bot",
       "headline" : "How I Built a Telegram Summarization Bot",
-      "description" : "I\u0026rsquo;m excited to share a side project I\u0026rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.\nWhy?\nIdeal for breaking news, saving time compared to reading the entire article Helps you in deciding whether to read the full article Acts as a Table of Contents for longer articles to guide you as you read Here\u0026rsquo;s a video demonstration of the bot in action:\nYour browser does not support the video tag.",
+      "description" : "I\u0026rsquo;ve been working on a Telegram bot that summarizes articles in 5 bullet points.\nWhy?\nIdeal for breaking news, saving time compared to reading the entire article Helps you in deciding whether to read the full article Acts as a Table of Contents for longer articles to guide you as you read Here\u0026rsquo;s a video demonstration of the bot in action:\nYour browser does not support the video tag. The bot works on articles of any length.",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -31,8 +31,8 @@
       "accountablePerson" : "Thomas",
       "copyrightHolder" : "Thomas",
       "copyrightYear" : "2024",
-      "datePublished": "2024-03-07 11:31:00 \u002b0800 \u002b0800",
-      "dateModified" : "2024-03-07 11:31:00 \u002b0800 \u002b0800",
+      "datePublished": "2024-04-11 00:31:00 -0700 PDT",
+      "dateModified" : "2024-04-11 00:31:00 -0700 PDT",
       "url" : "https:\/\/thomastay.dev\/blog\/how-i-built-a-telegram-summarization-bot\/",
       "keywords" : [  ]
   }
@@ -40,14 +40,14 @@
 <title>How I Built a Telegram Summarization Bot - Thomas Tay&#39;s blog</title>
   <meta property="og:title" content="How I Built a Telegram Summarization Bot - Thomas Tay&#39;s blog" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="I&rsquo;m excited to share a side project I&rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.
+  <meta property="og:description" content="I&rsquo;ve been working on a Telegram bot that summarizes articles in 5 bullet points.
 Why?
 Ideal for breaking news, saving time compared to reading the entire article Helps you in deciding whether to read the full article Acts as a Table of Contents for longer articles to guide you as you read Here&rsquo;s a video demonstration of the bot in action:
-Your browser does not support the video tag." />
-  <meta name="description" content="I&rsquo;m excited to share a side project I&rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.
+Your browser does not support the video tag. The bot works on articles of any length." />
+  <meta name="description" content="I&rsquo;ve been working on a Telegram bot that summarizes articles in 5 bullet points.
 Why?
 Ideal for breaking news, saving time compared to reading the entire article Helps you in deciding whether to read the full article Acts as a Table of Contents for longer articles to guide you as you read Here&rsquo;s a video demonstration of the bot in action:
-Your browser does not support the video tag." />
+Your browser does not support the video tag. The bot works on articles of any length." />
   <meta property="og:locale" content="en-us" />
 
 
@@ -87,8 +87,8 @@ Your browser does not support the video tag." />
           <div class="row post-desc">
             <div class="col-xs-6">
               
-              <time class="post-date" datetime="2024-03-07 11:31:00 &#43;0800">
-                07 Mar 2024
+              <time class="post-date" datetime="2024-04-11 00:31:00 PDT">
+                11 Apr 2024
               </time>
               
             </div>
@@ -104,7 +104,7 @@ Your browser does not support the video tag." />
 
         <div class="post-content markdown-body">
           
-          <p>I&rsquo;m excited to share a side project I&rsquo;ve been working on - a Telegram bot that summarizes articles in 5 bullet points.</p>
+          <p>I&rsquo;ve been working on a Telegram bot that summarizes articles in 5 bullet points.</p>
 <p>Why?</p>
 <ul>
 <li>Ideal for breaking news, saving time compared to reading the entire article</li>
@@ -140,11 +140,17 @@ Your browser does not support the video tag." />
 <li>Google apologizes after new Gemini AI refuses to show pictures, achievements of White people</li>
 </ul>
 </blockquote>
-<p>Mixtral is hosted by several providers, so I recommend shopping around to find the best one for your needs. I use Lepton as my API provider because it offers quick response times for low prices, but I&rsquo;m considering switching to Groq, which uses custom chips instead of GPUs to serve Mixtral.
-For my bot, I pay approximately $1.50/mo to Lepton for their API for a thousand articles. That&rsquo;s with one user. On average each article has about 2750 tokens of input and 250 tokens of output.</p>
+<p>Mixtral is hosted by several providers, so I recommend shopping around to find the best one for your needs. I use Lepton as my API provider because it offers quick response times for low prices, but I&rsquo;m considering switching to Groq, which uses custom chips instead of GPUs to serve Mixtral.</p>
+<p>For my bot, I pay approximately $1.50/mo to Lepton for their API for a thousand articles. That&rsquo;s with one user. On average each article has about 2750 tokens of input and 250 tokens of output.</p>
 <p>Here&rsquo;s a chart showing the response time vs price for various providers, from <a href="https://artificialanalysis.ai/models/mixtral-8x7b-instruct/hosts?parallel_queries=single&amp;prompt_length=long">artificialanalysis</a>. The chart isn&rsquo;t that accurate: Lepton is charging me $0.5 / M tokens, not $0.35. But still, Lepton has been pretty good in the time I&rsquo;ve used it.</p>
 <p><img src="total-response-time-vs-price.png" alt="Lepton analysis"></p>
 <p><em>Chart was taken on Feb 29</em></p>
+<h3 id="other-models">Other models</h3>
+<p>With the new Claude Haiku and Mistral 8x22b models out, I would strongly consider moving to those instead.</p>
+<ul>
+<li>Haiku is $0.25/1.25, which is already cheaper than Lepton</li>
+<li>Mistral 8x22b is going for $1.08/1.08, which is pretty expensive, but it&rsquo;s one of the best models out there. I&rsquo;d wait for it to get fine tuned with a good Nous-Hermes or Nous-Capybara finetune, though.</li>
+</ul>
 <h2 id="summarizing-longer-articles">Summarizing longer articles</h2>
 <p>Mixtral has a large context length of approximately 25k words or 32k tokens, but it produces better summaries when fed shorter articles. To summarize longer articles, I use a chunking strategy where I chop the text into pieces, summarize each piece into one paragraph, then summarize the paragraphs. This results in a more comprehensive summary that covers more broad points about the article.</p>
 <p>For example, here&rsquo;s a comparison of two summaries of <a href="https://danluu.com/diseconomies-scale/">danluu&rsquo;s article on diseconomies of scale</a>:</p>
@@ -188,6 +194,18 @@ Summaries are good for the case of fluff since they cut through fluff amazingly.
 <p>Disagreeing is a creative process. It requires the AI to think and invent new ideas by itself. So you want the smartest AI model on the planet to disagree with you. Exactly like having a yes-man vs a guy who gives you constructive criticism.</p>
 <p>I&rsquo;m trying out different techniques and will post about it once I&rsquo;m done with research, but from initial thoughts it will either be GPT4-Turbo or Claude 3 Opus.</p>
 <p>The problem is that these models are incredibly expensive. Claude 3 Opus would cost ~$0.06 per disagreement, 50x more expensive than Mixtral. Even if you only generate 10 disagreements a day, that&rsquo;s $18 / mo in api costs! 💰💰 Which is why I&rsquo;m working to see if I can get better results from cheaper models.</p>
+<h1 id="telegram-api">Telegram API</h1>
+<p>Working with the telegram API was surprisingly easy and I don&rsquo;t have much to say here. The examples on the python-telegram-bot repo are way more helpful than the documentation. For more info, I&rsquo;d recommend reading the file <code>bot_handlers.py</code> in <a href="https://github.com/thomastay/url-summarizer-telegram-bot">my repo</a>.</p>
+<h1 id="fetching-and-parsing-articles">Fetching and parsing articles</h1>
+<p>I used <a href="https://trafilatura.readthedocs.io/en/latest/">trafilatura</a>, which is an open source library for parsing HTML. BeautifulSoup is great when you know the structure of your document, but trafilatura is tuned for extracting articles from text.
+Not much to say here, just use <code>trafilatura.extract_text</code>.</p>
+<p>As I read a lot of blog posts with code samples, which you don&rsquo;t need for summarization, I setup trafilatura to filter out <code>&lt;code&gt;</code>, <code>&lt;pre&gt;</code> and <code>&lt;table&gt;</code> blocks, which you can do with the following snippet.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>trafilatura<span style="color:#f92672">.</span>extract(
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>	downloaded,
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>	prune_xpath<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#34;//code&#34;</span>, <span style="color:#e6db74">&#34;//pre&#34;</span>],
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>	include_tables<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>)
+</span></span></code></pre></div><p>I feel like there&rsquo;s so much more that I want to do here. IMO the biggest issue about an article summarizer is getting quality articles out of the HTML. I intend to write custom parsers for common domains as my next project, and hopefully improve the quality of article extraction for news articles at least.</p>
 <h1 id="infrastructure">Infrastructure</h1>
 <p><em>Disclaimer</em>: this was an experimental project so I decided to use infrastructure that I&rsquo;m not typically accustomed to. I would not recommend this stack - instead, just use Supabase!</p>
 <p>I currently host my summary bot on Azure Functions, which is a great option as it offers a free tier. You receive 1M free function executions per month, which is more than sufficient for a single-user bot. Running the bot as a function provides some nifty features, such as auto-monitoring and tracing.</p>
@@ -199,7 +217,7 @@ I then deploy the app to Azure from a Github action which runs on every push.</p
 <p>Due to these reasons, I&rsquo;m considering moving to hosting my own server soon on an Azure VM. I&rsquo;ve considered Platform as a Service (PaaS) services, but they seem to require more effort than simply hosting a bot on a VM directly. I&rsquo;m curious to know why people use PaaS, so feel free to share your thoughts.</p>
 <p><em>Disclosure: I work for Microsoft</em></p>
 <h2 id="database">Database</h2>
-<p>I use Azure blob &amp; table storage as my database. Yes, really.</p>
+<p>I use Azure blob &amp; table storage as my database :)</p>
 <p>I have a table that stores summaries along with the user ID of the person who generated them. It&rsquo;s keyed on the timestamp of the summary creation and is primarily used for me to review bad summaries and figure out how to improve things.
 <img src="summaries.png" alt="summaries"></p>
 <p>I have a <em>users</em> table that&rsquo;s just me and my friends. When a user sends a message to the summary bot, it first checks to see if the user ID is present in the users table as a form of authentication.
@@ -208,7 +226,7 @@ Again, I wouldn&rsquo;t recommend this setup. Use Supabase or even just sqlite t
 <h1 id="conclusion">Conclusion</h1>
 <p>Overall, this was a fun and enlightening project to work on. I dedicated about a month to it on weekends, focusing mainly on improving the prompts. The DB + Telegram side was relatively quick to work on, and I essentially hacked it together in a weekend.
 If you&rsquo;re interested in checking out the code, the repository is open source and can be found here: <a href="https://github.com/thomastay/url-summarizer-telegram-bot">URL Summarizer Telegram Bot</a>
-If you&rsquo;d like to try out the bot, feel free to DM me on Twitter <a href="https://twitter.com/thomastayac">@thomastayac</a>, or send me an email at <a href="mailto:thomastayc@gmail.com">thomastayac@gmail.com</a>. If there is enough interest, I plan to open this up to others to use. However, the API cost is currently a significant factor in allowing only family and friends access.</p>
+If you&rsquo;d like to know more, feel free to @ me on Twitter <a href="https://twitter.com/thomastayac">@thomastayac</a>, or send me an email at <a href="mailto:thomastayc@gmail.com">thomastayac@gmail.com</a>. Sorry but I can&rsquo;t open up access for now, the API cost is too expensive to open it up for public use, and I don&rsquo;t feel it&rsquo;s in any state to charge people for it.</p>
 <h1 id="references">References</h1>
 <ol>
 <li><a href="https://openai.com/research/summarizing-books">https://openai.com/research/summarizing-books</a>. This article was my inspiration for the chunking strategy</li>
