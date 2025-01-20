@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.123.4">
+  <meta name="generator" content="Hugo 0.139.2">
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "Pony actors don\u0027t have (their own) stacks",
       "headline" : "Pony actors don\u0027t have (their own) stacks",
-      "description" : "In this short article I\u0026rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir\/Erlang processes have a 1.2KB combined stack and heap. But surprisingly, Pony\u0026rsquo;s actors don\u0026rsquo;t have their own stacks!",
+      "description" : "\u003cp\u003eIn this short article I\u0026rsquo;m going to talk about how \u003ca href=\u0022https:\/\/ponylang.io\u0022\u003ePony\u003c\/a\u003e gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir\/Erlang processes have a 1.2KB combined stack and heap.\nBut surprisingly, Pony\u0026rsquo;s actors don\u0026rsquo;t have their own stacks! Instead, they use the stack of the OS thread that they\u0026rsquo;re running on.\u003c\/p\u003e",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -31,8 +31,8 @@
       "accountablePerson" : "Thomas",
       "copyrightHolder" : "Thomas",
       "copyrightYear" : "2020",
-      "datePublished": "2020-06-12 12:00:00 \u002b0800 \u002b0800",
-      "dateModified" : "2020-06-12 12:00:00 \u002b0800 \u002b0800",
+      "datePublished": "2020-06-12 12:00:00 \u002b0800 \u002b08",
+      "dateModified" : "2020-06-12 12:00:00 \u002b0800 \u002b08",
       "url" : "https:\/\/thomastay.dev\/blog\/pony_actors_no_stacks\/",
       "keywords" : [  ]
   }
@@ -40,8 +40,10 @@
 <title>Pony actors don&#39;t have (their own) stacks - Thomas Tay&#39;s blog</title>
   <meta property="og:title" content="Pony actors don&#39;t have (their own) stacks - Thomas Tay&#39;s blog" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="In this short article I&rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir/Erlang processes have a 1.2KB combined stack and heap. But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks!" />
-  <meta name="description" content="In this short article I&rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir/Erlang processes have a 1.2KB combined stack and heap. But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks!" />
+  <meta property="og:description" content="In this short article I&rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir/Erlang processes have a 1.2KB combined stack and heap.
+But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks! Instead, they use the stack of the OS thread that they&rsquo;re running on." />
+  <meta name="description" content="In this short article I&rsquo;m going to talk about how Pony gets away with not storing a stack for each of its actors. I was pretty surprised to find this out, given that in most actor model languages actors have their own stacks. For instance, in Go, Goroutines have a stack size of 2KB. Elixir/Erlang processes have a 1.2KB combined stack and heap.
+But surprisingly, Pony&rsquo;s actors don&rsquo;t have their own stacks! Instead, they use the stack of the OS thread that they&rsquo;re running on." />
   <meta property="og:locale" content="en-us" />
 
 
@@ -81,7 +83,7 @@
           <div class="row post-desc">
             <div class="col-xs-6">
               
-              <time class="post-date" datetime="2020-06-12 12:00:00 &#43;0800">
+              <time class="post-date" datetime="2020-06-12 12:00:00 &#43;08">
                 12 Jun 2020
               </time>
               

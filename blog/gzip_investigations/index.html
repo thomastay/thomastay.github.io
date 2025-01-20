@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.123.4">
+  <meta name="generator" content="Hugo 0.139.2">
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "Decompressing a gzip file by hand",
       "headline" : "Decompressing a gzip file by hand",
-      "description" : "Let\u0026rsquo;s make a gzipped file and see what\u0026rsquo;s in it. We\u0026rsquo;ll keep it simple: just write 8 \u0026lsquo;a\u0026rsquo;s to a file.\n$ echo \u0026#34;aaaaaaaa\u0026#34; \u0026gt; test.out $ xxd test.out 00000000: 6161 6161 6161 6161 0a aaaaaaaa. As we can see, our file is 9 bytes long. We have 8 \u0026lsquo;a\u0026rsquo; bytes written, plus a Line Feed (LF) character written at the end.\nLet\u0026rsquo;s make the gzip file now. We\u0026rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about.",
+      "description" : "\u003cp\u003e\u003cem\u003e2024 Update:\u003c\/em\u003e \u003ca href=\u0022\/blog\/decompressing_gzip_2\u0022\u003ePart 2\u003c\/a\u003e \u003cem\u003eis out!\u003c\/em\u003e\u003c\/p\u003e\n\u003cp\u003eLet\u0026rsquo;s make a gzipped file and see what\u0026rsquo;s in it. We\u0026rsquo;ll keep it simple: just write 8 \u0026lsquo;a\u0026rsquo;s to a file.\u003c\/p\u003e\n\u003cpre tabindex=\u00220\u0022\u003e\u003ccode\u003e$ echo \u0026#34;aaaaaaaa\u0026#34; \u0026gt; test.out\n$ xxd test.out\n00000000: 6161 6161 6161 6161 0a     aaaaaaaa.\n\u003c\/code\u003e\u003c\/pre\u003e\u003cp\u003eAs we can see, our file is 9 bytes long. We have 8 \u0026lsquo;a\u0026rsquo; bytes written, plus a Line Feed (LF) character written at the end.\u003c\/p\u003e\n\u003cp\u003eLet\u0026rsquo;s make the gzip file now. We\u0026rsquo;ll do \u003ccode\u003egzip -1\u003c\/code\u003e, since that will use the fastest compression mode and give us more things to talk about.\u003c\/p\u003e",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -31,8 +31,8 @@
       "accountablePerson" : "Thomas",
       "copyrightHolder" : "Thomas",
       "copyrightYear" : "2021",
-      "datePublished": "2021-10-16 00:03:59 -0700 PDT",
-      "dateModified" : "2021-10-16 00:03:59 -0700 PDT",
+      "datePublished": "2021-10-16 00:03:59 -0700 -0700",
+      "dateModified" : "2021-10-16 00:03:59 -0700 -0700",
       "url" : "https:\/\/thomastay.dev\/blog\/gzip_investigations\/",
       "keywords" : [  ]
   }
@@ -40,11 +40,19 @@
 <title>Decompressing a gzip file by hand - Thomas Tay&#39;s blog</title>
   <meta property="og:title" content="Decompressing a gzip file by hand - Thomas Tay&#39;s blog" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.
-$ echo &#34;aaaaaaaa&#34; &gt; test.out $ xxd test.out 00000000: 6161 6161 6161 6161 0a aaaaaaaa. As we can see, our file is 9 bytes long. We have 8 &lsquo;a&rsquo; bytes written, plus a Line Feed (LF) character written at the end.
+  <meta property="og:description" content="2024 Update: Part 2 is out!
+Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.
+$ echo &#34;aaaaaaaa&#34; &gt; test.out
+$ xxd test.out
+00000000: 6161 6161 6161 6161 0a     aaaaaaaa.
+As we can see, our file is 9 bytes long. We have 8 &lsquo;a&rsquo; bytes written, plus a Line Feed (LF) character written at the end.
 Let&rsquo;s make the gzip file now. We&rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about." />
-  <meta name="description" content="Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.
-$ echo &#34;aaaaaaaa&#34; &gt; test.out $ xxd test.out 00000000: 6161 6161 6161 6161 0a aaaaaaaa. As we can see, our file is 9 bytes long. We have 8 &lsquo;a&rsquo; bytes written, plus a Line Feed (LF) character written at the end.
+  <meta name="description" content="2024 Update: Part 2 is out!
+Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.
+$ echo &#34;aaaaaaaa&#34; &gt; test.out
+$ xxd test.out
+00000000: 6161 6161 6161 6161 0a     aaaaaaaa.
+As we can see, our file is 9 bytes long. We have 8 &lsquo;a&rsquo; bytes written, plus a Line Feed (LF) character written at the end.
 Let&rsquo;s make the gzip file now. We&rsquo;ll do gzip -1, since that will use the fastest compression mode and give us more things to talk about." />
   <meta property="og:locale" content="en-us" />
 
@@ -85,7 +93,7 @@ Let&rsquo;s make the gzip file now. We&rsquo;ll do gzip -1, since that will use 
           <div class="row post-desc">
             <div class="col-xs-6">
               
-              <time class="post-date" datetime="2021-10-16 00:03:59 PDT">
+              <time class="post-date" datetime="2021-10-16 00:03:59 -0700">
                 16 Oct 2021
               </time>
               
@@ -102,7 +110,8 @@ Let&rsquo;s make the gzip file now. We&rsquo;ll do gzip -1, since that will use 
 
         <div class="post-content markdown-body">
           
-          <p>Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.</p>
+          <p><em>2024 Update:</em> <a href="/blog/decompressing_gzip_2">Part 2</a> <em>is out!</em></p>
+<p>Let&rsquo;s make a gzipped file and see what&rsquo;s in it. We&rsquo;ll keep it simple: just write 8 &lsquo;a&rsquo;s to a file.</p>
 <pre tabindex="0"><code>$ echo &#34;aaaaaaaa&#34; &gt; test.out
 $ xxd test.out
 00000000: 6161 6161 6161 6161 0a     aaaaaaaa.

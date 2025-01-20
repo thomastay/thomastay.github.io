@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.123.4">
+  <meta name="generator" content="Hugo 0.139.2">
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +23,7 @@
       "articleSection" : "",
       "name" : "Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!",
       "headline" : "Decompressing a gzip file by hand (sorta), part 2: Now with Huffman!",
-      "description" : "Part 1 here: Link to part 1\nLet\u0026rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let\u0026rsquo;s decode the decompressed huffman codes too.\nStart by writing some data to disk:\n$ echo \u0026#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch\u0026#34; \u0026gt; test-huff.txt $ xxd test-huff.txt 00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant 00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an 00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare 00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on 00000040: 7468 6520 7261 6e63 680a the ranch.",
+      "description" : "\u003cp\u003e\u003cem\u003ePart 1 here:\u003c\/em\u003e \u003ca href=\u0022\/blog\/gzip_investigations\u0022\u003eLink to part 1\u003c\/a\u003e\u003c\/p\u003e\n\u003cp\u003eLet\u0026rsquo;s decompress a gzip file by hand, just \u003ca href=\u0022\/blog\/gzip_investigations\u0022\u003elike we did last time in part 1\u003c\/a\u003e, but this time let\u0026rsquo;s decode the decompressed huffman codes too.\u003c\/p\u003e\n\u003cp\u003eStart by writing some data to disk:\u003c\/p\u003e\n\u003cpre tabindex=\u00220\u0022\u003e\u003ccode\u003e$ echo \u0026#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch\u0026#34; \u0026gt; test-huff.txt\n$ xxd test-huff.txt\n00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74  hector the frant\n00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20  ic father on an\n00000020: 616e 6368 6f72 206f 7220 6120 7261 7265  anchor or a rare\n00000030: 2066 6174 2063 6174 2073 6174 206f 6e20   fat cat sat on\n00000040: 7468 6520 7261 6e63 680a                 the ranch.\n\u003c\/code\u003e\u003c\/pre\u003e\u003cp\u003eOur file is 74 bytes this time, and specifically chosen to use only 13 characters:\u003c\/p\u003e",
       "inLanguage" : "en-US",
       "author" : "Thomas",
       "creator" : "Thomas",
@@ -43,11 +43,25 @@
   <meta property="og:description" content="Part 1 here: Link to part 1
 Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
-$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt $ xxd test-huff.txt 00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant 00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an 00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare 00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on 00000040: 7468 6520 7261 6e63 680a the ranch." />
+$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt
+$ xxd test-huff.txt
+00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74  hector the frant
+00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20  ic father on an
+00000020: 616e 6368 6f72 206f 7220 6120 7261 7265  anchor or a rare
+00000030: 2066 6174 2063 6174 2073 6174 206f 6e20   fat cat sat on
+00000040: 7468 6520 7261 6e63 680a                 the ranch.
+Our file is 74 bytes this time, and specifically chosen to use only 13 characters:" />
   <meta name="description" content="Part 1 here: Link to part 1
 Let&rsquo;s decompress a gzip file by hand, just like we did last time in part 1, but this time let&rsquo;s decode the decompressed huffman codes too.
 Start by writing some data to disk:
-$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt $ xxd test-huff.txt 00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74 hector the frant 00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20 ic father on an 00000020: 616e 6368 6f72 206f 7220 6120 7261 7265 anchor or a rare 00000030: 2066 6174 2063 6174 2073 6174 206f 6e20 fat cat sat on 00000040: 7468 6520 7261 6e63 680a the ranch." />
+$ echo &#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&#34; &gt; test-huff.txt
+$ xxd test-huff.txt
+00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74  hector the frant
+00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20  ic father on an
+00000020: 616e 6368 6f72 206f 7220 6120 7261 7265  anchor or a rare
+00000030: 2066 6174 2063 6174 2073 6174 206f 6e20   fat cat sat on
+00000040: 7468 6520 7261 6e63 680a                 the ranch.
+Our file is 74 bytes this time, and specifically chosen to use only 13 characters:" />
   <meta property="og:locale" content="en-us" />
 
 
@@ -176,80 +190,80 @@ Remember that the bits are packed LSB to MSB, and any integers are interpreted i
 <p>We intentionally restricted ourselves to 13 characters, let&rsquo;s see how they got encoded.</p>
 <p><em>Note that, again, since the Huffman codes are packed MSB to LSB, the output of infgen is actually reversed.</em></p>
 <table>
-<thead>
-<tr>
-<th>Char</th>
-<th>Huffman code</th>
-<th>Infgen&rsquo;s output</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>' '</code></td>
-<td>000</td>
-<td>000</td>
-</tr>
-<tr>
-<td>a</td>
-<td>001</td>
-<td>100</td>
-</tr>
-<tr>
-<td>r</td>
-<td>010</td>
-<td>010</td>
-</tr>
-<tr>
-<td>c</td>
-<td>1000</td>
-<td>0001</td>
-</tr>
-<tr>
-<td>e</td>
-<td>1001</td>
-<td>1001</td>
-</tr>
-<tr>
-<td>h</td>
-<td>1010</td>
-<td>0101</td>
-</tr>
-<tr>
-<td>t</td>
-<td>1011</td>
-<td>1101</td>
-</tr>
-<tr>
-<td>f</td>
-<td>11010</td>
-<td>01011</td>
-</tr>
-<tr>
-<td>n</td>
-<td>11011</td>
-<td>11011</td>
-</tr>
-<tr>
-<td>o</td>
-<td>11100</td>
-<td>00111</td>
-</tr>
-<tr>
-<td>s</td>
-<td>11101</td>
-<td>10111</td>
-</tr>
-<tr>
-<td>&lsquo;\n&rsquo;</td>
-<td>111110</td>
-<td>011111</td>
-</tr>
-<tr>
-<td>i</td>
-<td>111111</td>
-<td>11111</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Char</th>
+          <th>Huffman code</th>
+          <th>Infgen&rsquo;s output</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>' '</code></td>
+          <td>000</td>
+          <td>000</td>
+      </tr>
+      <tr>
+          <td>a</td>
+          <td>001</td>
+          <td>100</td>
+      </tr>
+      <tr>
+          <td>r</td>
+          <td>010</td>
+          <td>010</td>
+      </tr>
+      <tr>
+          <td>c</td>
+          <td>1000</td>
+          <td>0001</td>
+      </tr>
+      <tr>
+          <td>e</td>
+          <td>1001</td>
+          <td>1001</td>
+      </tr>
+      <tr>
+          <td>h</td>
+          <td>1010</td>
+          <td>0101</td>
+      </tr>
+      <tr>
+          <td>t</td>
+          <td>1011</td>
+          <td>1101</td>
+      </tr>
+      <tr>
+          <td>f</td>
+          <td>11010</td>
+          <td>01011</td>
+      </tr>
+      <tr>
+          <td>n</td>
+          <td>11011</td>
+          <td>11011</td>
+      </tr>
+      <tr>
+          <td>o</td>
+          <td>11100</td>
+          <td>00111</td>
+      </tr>
+      <tr>
+          <td>s</td>
+          <td>11101</td>
+          <td>10111</td>
+      </tr>
+      <tr>
+          <td>&lsquo;\n&rsquo;</td>
+          <td>111110</td>
+          <td>011111</td>
+      </tr>
+      <tr>
+          <td>i</td>
+          <td>111111</td>
+          <td>11111</td>
+      </tr>
+  </tbody>
 </table>
 <p>The codes (almost) form a beautiful prefix-free huffman code, arranged by the frequency of how often the characters appear in the source. But there are some gaps, because gzip has a neat trick to increase compression - it combines literals and lengths into a single Huffman alphabet.
 This lets it save extra space, instead of encoding literals and lengths with two separate Huffman codes.</p>
@@ -257,95 +271,95 @@ This lets it save extra space, instead of encoding literals and lengths with two
 <p>However, for some reason that I don&rsquo;t understand, <em>distance</em> is encoded with a separate alphabet. Why this insanity? ¯\<em>(ツ)</em>/¯ &hellip;</p>
 <p>The full len/lit huffman tree is actually as follows:</p>
 <table>
-<thead>
-<tr>
-<th>Char</th>
-<th>Huffman code</th>
-<th>Infgen&rsquo;s output</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>' '</code></td>
-<td>000</td>
-<td>000</td>
-</tr>
-<tr>
-<td>a</td>
-<td>001</td>
-<td>100</td>
-</tr>
-<tr>
-<td>r</td>
-<td>010</td>
-<td>010</td>
-</tr>
-<tr>
-<td><strong>3 (len)</strong></td>
-<td>011</td>
-<td>110</td>
-</tr>
-<tr>
-<td>c</td>
-<td>1000</td>
-<td>0001</td>
-</tr>
-<tr>
-<td>e</td>
-<td>1001</td>
-<td>1001</td>
-</tr>
-<tr>
-<td>h</td>
-<td>1010</td>
-<td>0101</td>
-</tr>
-<tr>
-<td>t</td>
-<td>1011</td>
-<td>1101</td>
-</tr>
-<tr>
-<td><strong>4 (len)</strong></td>
-<td>1100</td>
-<td>0011</td>
-</tr>
-<tr>
-<td>f</td>
-<td>11010</td>
-<td>01011</td>
-</tr>
-<tr>
-<td>n</td>
-<td>11011</td>
-<td>11011</td>
-</tr>
-<tr>
-<td>o</td>
-<td>11100</td>
-<td>00111</td>
-</tr>
-<tr>
-<td>s</td>
-<td>11101</td>
-<td>10111</td>
-</tr>
-<tr>
-<td><strong>END</strong></td>
-<td>11110</td>
-<td>01111</td>
-</tr>
-<tr>
-<td>&lsquo;\n&rsquo;</td>
-<td>111110</td>
-<td>011111</td>
-</tr>
-<tr>
-<td>i</td>
-<td>111111</td>
-<td>11111</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Char</th>
+          <th>Huffman code</th>
+          <th>Infgen&rsquo;s output</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>' '</code></td>
+          <td>000</td>
+          <td>000</td>
+      </tr>
+      <tr>
+          <td>a</td>
+          <td>001</td>
+          <td>100</td>
+      </tr>
+      <tr>
+          <td>r</td>
+          <td>010</td>
+          <td>010</td>
+      </tr>
+      <tr>
+          <td><strong>3 (len)</strong></td>
+          <td>011</td>
+          <td>110</td>
+      </tr>
+      <tr>
+          <td>c</td>
+          <td>1000</td>
+          <td>0001</td>
+      </tr>
+      <tr>
+          <td>e</td>
+          <td>1001</td>
+          <td>1001</td>
+      </tr>
+      <tr>
+          <td>h</td>
+          <td>1010</td>
+          <td>0101</td>
+      </tr>
+      <tr>
+          <td>t</td>
+          <td>1011</td>
+          <td>1101</td>
+      </tr>
+      <tr>
+          <td><strong>4 (len)</strong></td>
+          <td>1100</td>
+          <td>0011</td>
+      </tr>
+      <tr>
+          <td>f</td>
+          <td>11010</td>
+          <td>01011</td>
+      </tr>
+      <tr>
+          <td>n</td>
+          <td>11011</td>
+          <td>11011</td>
+      </tr>
+      <tr>
+          <td>o</td>
+          <td>11100</td>
+          <td>00111</td>
+      </tr>
+      <tr>
+          <td>s</td>
+          <td>11101</td>
+          <td>10111</td>
+      </tr>
+      <tr>
+          <td><strong>END</strong></td>
+          <td>11110</td>
+          <td>01111</td>
+      </tr>
+      <tr>
+          <td>&lsquo;\n&rsquo;</td>
+          <td>111110</td>
+          <td>011111</td>
+      </tr>
+      <tr>
+          <td>i</td>
+          <td>111111</td>
+          <td>11111</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="canonicalizing-the-huffman-code">Canonicalizing the huffman code</h3>
 <p>Notice that since we wrote the Huffman code in ascending order, there&rsquo;s really no need for us to specify exactly what the bits are. If we just knew the length of each character&rsquo;s huffman code, we could reconstitute the Huffman code exactly.</p>
@@ -354,95 +368,95 @@ The length 4 characters, <em>c, e, h, t</em>, are similarly in alphabetical orde
 <p>This technique is called <a href="https://en.wikipedia.org/wiki/Canonical_Huffman_code">Canonical Huffman coding</a>, and it&rsquo;s an insanely cool trick to represent Huffman codes. Basically every single huffman encoding, even in other compression formats, works like this. Take some time to read the linked Wikipedia article if this doesn&rsquo;t make sense.</p>
 <p>So we can represent our Huffman code like this:</p>
 <table>
-<thead>
-<tr>
-<th>Char</th>
-<th>Huffman code</th>
-<th>Code Length</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>' '</code></td>
-<td>000</td>
-<td>3</td>
-</tr>
-<tr>
-<td>a</td>
-<td>001</td>
-<td>3</td>
-</tr>
-<tr>
-<td>r</td>
-<td>010</td>
-<td>3</td>
-</tr>
-<tr>
-<td><strong>3 (len)</strong></td>
-<td>011</td>
-<td>3</td>
-</tr>
-<tr>
-<td>c</td>
-<td>1000</td>
-<td>4</td>
-</tr>
-<tr>
-<td>e</td>
-<td>1001</td>
-<td>4</td>
-</tr>
-<tr>
-<td>h</td>
-<td>1010</td>
-<td>4</td>
-</tr>
-<tr>
-<td>t</td>
-<td>1011</td>
-<td>4</td>
-</tr>
-<tr>
-<td><strong>4 (len)</strong></td>
-<td>1100</td>
-<td>4</td>
-</tr>
-<tr>
-<td>f</td>
-<td>11010</td>
-<td>5</td>
-</tr>
-<tr>
-<td>n</td>
-<td>11011</td>
-<td>5</td>
-</tr>
-<tr>
-<td>o</td>
-<td>11100</td>
-<td>5</td>
-</tr>
-<tr>
-<td>s</td>
-<td>11101</td>
-<td>5</td>
-</tr>
-<tr>
-<td><strong>END</strong></td>
-<td>11110</td>
-<td>5</td>
-</tr>
-<tr>
-<td>&lsquo;\n&rsquo;</td>
-<td>111110</td>
-<td>6</td>
-</tr>
-<tr>
-<td>i</td>
-<td>111111</td>
-<td>6</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Char</th>
+          <th>Huffman code</th>
+          <th>Code Length</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>' '</code></td>
+          <td>000</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td>a</td>
+          <td>001</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td>r</td>
+          <td>010</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td><strong>3 (len)</strong></td>
+          <td>011</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td>c</td>
+          <td>1000</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>e</td>
+          <td>1001</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>h</td>
+          <td>1010</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>t</td>
+          <td>1011</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td><strong>4 (len)</strong></td>
+          <td>1100</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>f</td>
+          <td>11010</td>
+          <td>5</td>
+      </tr>
+      <tr>
+          <td>n</td>
+          <td>11011</td>
+          <td>5</td>
+      </tr>
+      <tr>
+          <td>o</td>
+          <td>11100</td>
+          <td>5</td>
+      </tr>
+      <tr>
+          <td>s</td>
+          <td>11101</td>
+          <td>5</td>
+      </tr>
+      <tr>
+          <td><strong>END</strong></td>
+          <td>11110</td>
+          <td>5</td>
+      </tr>
+      <tr>
+          <td>&lsquo;\n&rsquo;</td>
+          <td>111110</td>
+          <td>6</td>
+      </tr>
+      <tr>
+          <td>i</td>
+          <td>111111</td>
+          <td>6</td>
+      </tr>
+  </tbody>
 </table>
 <p>And when encoding it, we only need to transmit the code lengths, which will tell us how to get the Huffman code back.
 The len/lit alphabet goes from 0 to 285, so we could represent our huffman code as a length 286 array like this:</p>
@@ -479,55 +493,55 @@ rest zeroes
 <p>The last thing to specify is how we should represent the codes 0-18. A naive implementation would be to represent them as fixed 5 bit ints, but notice that in our sample above, some codes occur more frequently than others. Wouldn&rsquo;t it be nice to compress those more frequent codes into a shorter number of bits? Oh wait, that&rsquo;s exactly what a Huffman code is, and we&rsquo;ve already written all the machinery to wrangle Huffman codes.</p>
 <p>So, gzip represents the codes 0-18 using a second round of Huffman codes. In our example, here&rsquo;s the Huffman table for the codelengths:</p>
 <table>
-<thead>
-<tr>
-<th>Code</th>
-<th>Huffman code</th>
-<th>Code Length</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>00</td>
-<td>2</td>
-</tr>
-<tr>
-<td>3</td>
-<td>01</td>
-<td>2</td>
-</tr>
-<tr>
-<td>4</td>
-<td>100</td>
-<td>3</td>
-</tr>
-<tr>
-<td>5</td>
-<td>101</td>
-<td>3</td>
-</tr>
-<tr>
-<td>2</td>
-<td>1100</td>
-<td>4</td>
-</tr>
-<tr>
-<td>6</td>
-<td>1101</td>
-<td>4</td>
-</tr>
-<tr>
-<td>17</td>
-<td>1110</td>
-<td>4</td>
-</tr>
-<tr>
-<td>18</td>
-<td>1111</td>
-<td>4</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Code</th>
+          <th>Huffman code</th>
+          <th>Code Length</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>00</td>
+          <td>2</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>01</td>
+          <td>2</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>100</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>101</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>1100</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>1101</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>17</td>
+          <td>1110</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>18</td>
+          <td>1111</td>
+          <td>4</td>
+      </tr>
+  </tbody>
 </table>
 <p>These second-round code lengths (code lengths of code lengths) are then encoded as fixed 3 bit integers, and laid out in a fixed 18 element array.</p>
 <pre tabindex="0"><code>2,0,4,2,3,3,4,0
@@ -585,59 +599,59 @@ MATCH 3 14 (the)
 </code></pre><p><em>We&rsquo;re using infgen&rsquo;s output, which prints Huffman codes in reverse to make it easier to spot in the bitstream. If you want to match it with the Huffman codes we saw earlier, reverse the bits here.</em></p>
 <p>Let&rsquo;s zoom in on the first MATCH statement. The <strong>110</strong> represents the Length/Lit code of 257. Since literals are only from 0-255, this is a Length code, and it represents a match of length 3. How far back do we have to look? Well, the next code that comes up is the distance code, which is also Huffman coded. We didn&rsquo;t decode it, but here is the distance code table:</p>
 <table>
-<thead>
-<tr>
-<th>Code</th>
-<th>Dist</th>
-<th>Extra bits</th>
-<th>Huffman code</th>
-<th>Infgen&rsquo;s output</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>9</td>
-<td>25-32</td>
-<td>3</td>
-<td>00</td>
-<td>00</td>
-</tr>
-<tr>
-<td>10</td>
-<td>33-48</td>
-<td>4</td>
-<td>01</td>
-<td>10</td>
-</tr>
-<tr>
-<td>2</td>
-<td>3</td>
-<td>0</td>
-<td>100</td>
-<td>001</td>
-</tr>
-<tr>
-<td>3</td>
-<td>4</td>
-<td>0</td>
-<td>101</td>
-<td>101</td>
-</tr>
-<tr>
-<td>7</td>
-<td>13- 16</td>
-<td>2</td>
-<td>110</td>
-<td>011</td>
-</tr>
-<tr>
-<td>11</td>
-<td>49-64</td>
-<td>4</td>
-<td>111</td>
-<td>111</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Code</th>
+          <th>Dist</th>
+          <th>Extra bits</th>
+          <th>Huffman code</th>
+          <th>Infgen&rsquo;s output</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>9</td>
+          <td>25-32</td>
+          <td>3</td>
+          <td>00</td>
+          <td>00</td>
+      </tr>
+      <tr>
+          <td>10</td>
+          <td>33-48</td>
+          <td>4</td>
+          <td>01</td>
+          <td>10</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>3</td>
+          <td>0</td>
+          <td>100</td>
+          <td>001</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>4</td>
+          <td>0</td>
+          <td>101</td>
+          <td>101</td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td>13- 16</td>
+          <td>2</td>
+          <td>110</td>
+          <td>011</td>
+      </tr>
+      <tr>
+          <td>11</td>
+          <td>49-64</td>
+          <td>4</td>
+          <td>111</td>
+          <td>111</td>
+      </tr>
+  </tbody>
 </table>
 <p>The distance codes don&rsquo;t all represent the distance exactly, instead they represent a range of distances and there are extra bits encoded afterwards that specify which distance length it really was.</p>
 <p>In the example above of MATCH 3 14, we see that the distance code (infgen) is <strong>011</strong>. This corresponds to code 7, which means that the distance is between 13-16, inclusive. The next 2 bits will tell us which one it is. The next two bits are <strong>01</strong>, which tell us that the exact distance to look back is 14.</p>
