@@ -2,14 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://thomastay.dev/blog/intel-sucks-but-heres-why-im-buying-it/</loc>
+    <lastmod>2025-02-23T22:44:52+08:00</lastmod>
+  </url><url>
     <loc>https://thomastay.dev/blog/</loc>
+    <lastmod>2025-02-23T22:44:52+08:00</lastmod>
+  </url><url>
+    <loc>https://thomastay.dev/blog/how-zoekt-works/</loc>
     <lastmod>2025-01-01T12:42:06+08:00</lastmod>
+  </url><url>
+    <loc>https://thomastay.dev/blog/how-to-backup-your-photos-to-azure-blob-storage-using-rustic/</loc>
+    <lastmod>2024-11-09T00:31:00-07:00</lastmod>
   </url><url>
     <loc>https://thomastay.dev/blog/how-i-built-a-telegram-summarization-bot/</loc>
     <lastmod>2024-04-11T00:31:00-07:00</lastmod>
   </url><url>
     <loc>https://thomastay.dev/blog/decompressing_gzip_2/</loc>
     <lastmod>2023-12-01T03:00:59-07:00</lastmod>
+  </url><url>
+    <loc>https://thomastay.dev/blog/value-investing-kellogg-2023/</loc>
+    <lastmod>2023-11-12T12:36:35-08:00</lastmod>
   </url><url>
     <loc>https://thomastay.dev/blog/domain-moved-1/</loc>
     <lastmod>2023-03-21T14:43:03+08:00</lastmod>
@@ -22,6 +34,9 @@
   </url><url>
     <loc>https://thomastay.dev/blog/100-reliable-and-fast/</loc>
     <lastmod>2022-01-30T19:31:48+08:00</lastmod>
+  </url><url>
+    <loc>https://thomastay.dev/blog/how-i-keep-this-blog-small/</loc>
+    <lastmod>2022-01-05T01:04:48-08:00</lastmod>
   </url><url>
     <loc>https://thomastay.dev/blog/a_computers_no/</loc>
     <lastmod>2021-12-27T17:55:44-08:00</lastmod>

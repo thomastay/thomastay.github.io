@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.139.2">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://thomastay.dev/blog/how-zoekt-works/" />
+  <link rel="canonical" href="https://thomastay.dev/blog/how-zoekt-works/" /><link rel="apple-touch-icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="shortcut" href="/assets/img/favicon-32x32.png" /><link rel="alternate" type="application/atom+xml" href="https://thomastay.dev/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/thomastay.dev\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "Exploring Zoekt",
+      "headline" : "Exploring Zoekt",
+      "description" : "\u003cp\u003eZoekt is a full text search engine that lets you run arbitrary substring or regular expression searches on a large set of files. I think the technology is highly underrated, and I spent some time spelunking in the Zoekt codebase, so here\u0026rsquo;s how it works.\n\u003cem\u003eNote: I\u0026rsquo;m not a Zoekt core contributor, just someone who uses Zoekt. Zoekt is written by Han-Wen Nienhuys and maintained by Sourcegraph.\u003c\/em\u003e\u003c\/p\u003e\n\u003ch2 id=\u0022what-is-zoekt\u0022\u003eWhat is Zoekt?\u003c\/h2\u003e\n\u003cp\u003eZoekt was built to be a code search engine. Given a codebase, it builds a search index that helps it answer regex queries quickly.\nThe technology it\u0026rsquo;s built on is called Trigram search. There is an excellent article from \u003ca href=\u0022https:\/\/swtch.com\/~rsc\/regexp\/regexp4.html\u0022\u003eRuss Cox which explains it\u003c\/a\u003e, but I will give a quick demonstration of how Zoekt does it below.\u003c\/p\u003e",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2025",
+      "datePublished": "2025-01-01 12:42:06 \u002b0800 \u002b0800",
+      "dateModified" : "2025-01-01 12:42:06 \u002b0800 \u002b0800",
+      "url" : "https:\/\/thomastay.dev\/blog\/how-zoekt-works\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>Exploring Zoekt - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="Exploring Zoekt - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="Zoekt is a full text search engine that lets you run arbitrary substring or regular expression searches on a large set of files. I think the technology is highly underrated, and I spent some time spelunking in the Zoekt codebase, so here&rsquo;s how it works.
+Note: I&rsquo;m not a Zoekt core contributor, just someone who uses Zoekt. Zoekt is written by Han-Wen Nienhuys and maintained by Sourcegraph.
+What is Zoekt?
+Zoekt was built to be a code search engine. Given a codebase, it builds a search index that helps it answer regex queries quickly.
+The technology it&rsquo;s built on is called Trigram search. There is an excellent article from Russ Cox which explains it, but I will give a quick demonstration of how Zoekt does it below." />
+  <meta name="description" content="Zoekt is a full text search engine that lets you run arbitrary substring or regular expression searches on a large set of files. I think the technology is highly underrated, and I spent some time spelunking in the Zoekt codebase, so here&rsquo;s how it works.
+Note: I&rsquo;m not a Zoekt core contributor, just someone who uses Zoekt. Zoekt is written by Han-Wen Nienhuys and maintained by Sourcegraph.
+What is Zoekt?
+Zoekt was built to be a code search engine. Given a codebase, it builds a search index that helps it answer regex queries quickly.
+The technology it&rsquo;s built on is called Trigram search. There is an excellent article from Russ Cox which explains it, but I will give a quick demonstration of how Zoekt does it below." />
+  <meta property="og:locale" content="en-us" />
+
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
+  <link rel="stylesheet" href="/blog/css/index.min.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">Exploring Zoekt</h1>
+          <div class="row post-desc">
+            <div class="col-xs-6">
+              
+              <time class="post-date" datetime="2025-01-01 12:42:06 &#43;0800">
+                01 Jan 2025
+              </time>
+              
+            </div>
+            <div class="col-xs-6">
+              
+              <div class="post-author">
+                <a target="_blank" href="https://thomastay.dev/">@Thomas</a>
+              </div>
+              
+            </div>
+          </div>
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>Zoekt is a full text search engine that lets you run arbitrary substring or regular expression searches on a large set of files. I think the technology is highly underrated, and I spent some time spelunking in the Zoekt codebase, so here&rsquo;s how it works.
+<em>Note: I&rsquo;m not a Zoekt core contributor, just someone who uses Zoekt. Zoekt is written by Han-Wen Nienhuys and maintained by Sourcegraph.</em></p>
+<h2 id="what-is-zoekt">What is Zoekt?</h2>
+<p>Zoekt was built to be a code search engine. Given a codebase, it builds a search index that helps it answer regex queries quickly.
+The technology it&rsquo;s built on is called Trigram search. There is an excellent article from <a href="https://swtch.com/~rsc/regexp/regexp4.html">Russ Cox which explains it</a>, but I will give a quick demonstration of how Zoekt does it below.</p>
+<p>Suppose we have a file to index, which contains the string &ldquo;hello, world!&rdquo;. We would break this into trigrams, including the space. Note that Zoekt doesn&rsquo;t delineate word boundaries at index time, leaving it to the Regex engine at match time.</p>
+<pre tabindex="0"><code>&#34;hel&#34;, &#34;ell&#34;, &#34;llo&#34;, &#34;lo,&#34;, 
+&#34;o, &#34;, &#34;, w&#34;, &#34; wo&#34;, &#34;wor&#34;, 
+&#34;orl&#34;, &#34;rld&#34;, &#34;ld!&#34;
+</code></pre><p>Then, unlike Cox&rsquo;s technique, Zoekt also stores the index of that trigram in the document, so we&rsquo;d have a map from trigram to index. Zoekt stores this in sorted order as B+ trees.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>{ <span style="color:#f92672">&#34;hel&#34;</span>: <span style="color:#ae81ff">0</span>, <span style="color:#f92672">&#34;ell&#34;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#960050;background-color:#1e0010">/*</span> <span style="color:#960050;background-color:#1e0010">...</span> <span style="color:#960050;background-color:#1e0010">*/,</span> <span style="color:#f92672">&#34;ld!&#34;</span>: <span style="color:#ae81ff">10</span> }
+</span></span></code></pre></div><p>Now suppose we have a query string &ldquo;world&rdquo;. We break up the query string into trigrams itself, &ldquo;wor&rdquo;, &ldquo;orl&rdquo;, &ldquo;rld&rdquo;. Unlike Cox&rsquo;s method, we only need to check the index for the two trigrams at the beginning and the end, namely &ldquo;wor&rdquo; and &ldquo;rld&rdquo;, and check that their positions are 2 apart. In this case, they are two positions apart (7 and 9), so we consider this document to be <em>matched</em>.</p>
+<p>Note that being <em>matched</em> doesn&rsquo;t mean that the substring is confirmed to be present, only that it is likely that the document contains the substring match. We <strong>could</strong> check all trigrams in the query and confirm that they are at the correct offset, but checking fewer trigrams means that we rely on the index less, and that allows Zoekt to hold less of the index in RAM. After confirming a match, the document has to be parsed anyway to retrieve the match line and any surrounding lines, so we might as well increase the false positive rate in order to reduce the index usage.</p>
+<p>Now that the document has been matched, we then retrieve the document, and check that it matches the entire substring between index 7-12. This check is very quick, because we already know the start and end index in the document, so it&rsquo;s just a matter of checking that we have a full substring match.</p>
+<p>Now let&rsquo;s search for the string <code>lo,qwor</code>, to showcase a false positive. This generates trigrams &ldquo;lo,&rdquo; and &ldquo;wor&rdquo; at the beginning and end of the query. We check the index and they are correctly 4 positions apart. So we go and check the document, but sadly the substring is not a full match.</p>
+<p>If the query contains a regular expression, for instance say the query is <code>hello.*world</code>, then we can still apply the trigram trick for the beginning and end index to check if the document has both the start and end index, but now we can&rsquo;t use the positions to verify a match, since <code>.*</code> can match an arbitrary number of characters. So Zoekt will look at all possible matches in the document, check that they are on the same line, and run the Regex engine on them. This is similar to what is described in Cox&rsquo;s article.</p>
+<p>There are also a lot of special cases, which you can find in <code>matchtree.go</code>. One interesting one is that the query <code>\bworld\b</code> completely skips the index, unlike what you might expect, instead just running directly as a substring search on the document itself. I would have thought that using the index would help speed up searches, but from the <a href="https://github.com/sourcegraph/zoekt/commit/ea5ebffdc0f22392cf9b61900f0ffbc759a982b5">commit that introduced it</a>, it seems that going without it sped up searches by 4-5x.</p>
+<h2 id="using-zoekt">Using Zoekt</h2>
+<p>To use Zoekt, you first have to create a Index file. You can create one by using a prebuilt binary for simplicity, or by using the Go API if you have more complex needs. I&rsquo;ll cover both approaches with more focus on the Go API as that&rsquo;s what I&rsquo;m using for my own project.</p>
+<p>Due to being maintained by two different companies, Zoekt has a lot of cruft. Looking in the <code>cmd</code> folder, we see a smorgasbord of binaries. Luckily, only a few of them are relevant for simple use cases.</p>
+<p>Useful programs for beginners:</p>
+<ol>
+<li>zoekt-index</li>
+<li>zoekt-git-index</li>
+<li>zoekt-indexserver</li>
+<li>zoekt-webserver</li>
+</ol>
+<p>Sourcegraph, utility or Gerrit related binaries:</p>
+<ol>
+<li>zoekt-archive-index - Useful for creating a Zoekt index from a Github tarball</li>
+<li>zoekt-dynamic-indexserver</li>
+<li>zoekt-git-clone</li>
+<li>zoekt-merge-index</li>
+<li>zoekt-mirror-bitbucket-server</li>
+<li>zoekt-mirror-gerrit</li>
+<li>zoekt-mirror-gitea</li>
+<li>zoekt-mirror-github</li>
+<li>zoekt-mirror-gitiles</li>
+<li>zoekt-mirror-gitlab</li>
+<li>zoekt-repo-index</li>
+<li>zoekt-test</li>
+<li>zoekt-sourcegraph-indexserver</li>
+</ol>
+<p><strong>Note: still under construction, but posting this as I won&rsquo;t have much time to work on it next few weeks</strong></p>
+<h2 id="references">References</h2>
+<ol>
+<li><a href="https://github.com/sourcegraph/zoekt/blob/main/doc/design.md">https://github.com/sourcegraph/zoekt/blob/main/doc/design.md</a></li>
+<li><a href="https://swtch.com/~rsc/regexp/regexp4.html">https://swtch.com/~rsc/regexp/regexp4.html</a></li>
+<li><a href="https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/">https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/</a></li>
+<li><a href="https://zeux.io/2019/04/20/qgrep-internals/">https://zeux.io/2019/04/20/qgrep-internals/</a></li>
+</ol>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev/blog" target="_blank">More articles</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev" target="_blank">Homepage</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay/hugo-theme-yinyang" target="_blank">Theme</a>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+
+<script>
+  
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>

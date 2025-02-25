@@ -6,8 +6,29 @@
     <description>Recent content on Thomas Tay&#39;s blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Apr 2024 00:31:00 -0700</lastBuildDate>
+    <lastBuildDate>Sun, 23 Feb 2025 22:44:52 +0800</lastBuildDate>
     <atom:link href="https://thomastay.dev/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Intel sucks but here&#39;s why I&#39;m buying it</title>
+      <link>https://thomastay.dev/blog/intel-sucks-but-heres-why-im-buying-it/</link>
+      <pubDate>Sun, 23 Feb 2025 22:44:52 +0800</pubDate>
+      <guid>https://thomastay.dev/blog/intel-sucks-but-heres-why-im-buying-it/</guid>
+      <description>&lt;p&gt;In the very long run, I believe that Intel&amp;rsquo;s stock has not much value.&lt;/p&gt;&#xA;&lt;p&gt;The reason is simple - innovation costs money, and Intel doesn&amp;rsquo;t have a lot of it. It&amp;rsquo;s already lost a lot of key staff over the past few years, and whispers say that most of their talent has already left.&lt;/p&gt;&#xA;&lt;p&gt;The one guy they brought back to fix things, Pat Gelsinger, didn&amp;rsquo;t have enough runway to fix everything, so they fired him.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Exploring Zoekt</title>
+      <link>https://thomastay.dev/blog/how-zoekt-works/</link>
+      <pubDate>Wed, 01 Jan 2025 12:42:06 +0800</pubDate>
+      <guid>https://thomastay.dev/blog/how-zoekt-works/</guid>
+      <description>&lt;p&gt;Zoekt is a full text search engine that lets you run arbitrary substring or regular expression searches on a large set of files. I think the technology is highly underrated, and I spent some time spelunking in the Zoekt codebase, so here&amp;rsquo;s how it works.&#xA;&lt;em&gt;Note: I&amp;rsquo;m not a Zoekt core contributor, just someone who uses Zoekt. Zoekt is written by Han-Wen Nienhuys and maintained by Sourcegraph.&lt;/em&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-is-zoekt&#34;&gt;What is Zoekt?&lt;/h2&gt;&#xA;&lt;p&gt;Zoekt was built to be a code search engine. Given a codebase, it builds a search index that helps it answer regex queries quickly.&#xA;The technology it&amp;rsquo;s built on is called Trigram search. There is an excellent article from &lt;a href=&#34;https://swtch.com/~rsc/regexp/regexp4.html&#34;&gt;Russ Cox which explains it&lt;/a&gt;, but I will give a quick demonstration of how Zoekt does it below.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>How to backup your photos to Azure blob storage using rustic</title>
+      <link>https://thomastay.dev/blog/how-to-backup-your-photos-to-azure-blob-storage-using-rustic/</link>
+      <pubDate>Sat, 09 Nov 2024 00:31:00 -0700</pubDate>
+      <guid>https://thomastay.dev/blog/how-to-backup-your-photos-to-azure-blob-storage-using-rustic/</guid>
+      <description>&lt;h2 id=&#34;basic-summary-of-my-backup-strategy&#34;&gt;Basic summary of my backup strategy&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;I backup my files to Azure blob storage&lt;/li&gt;&#xA;&lt;li&gt;I have 3 backups following the &lt;a href=&#34;https://www.backblaze.com/blog/the-3-2-1-backup-strategy/&#34;&gt;3-2-1 backup strategy&lt;/a&gt;.&lt;/li&gt;&#xA;&lt;li&gt;For my primary storage location I have a Onedrive backup which backs up photos from my phone. I consider this the primary, and my files are kept here&lt;/li&gt;&#xA;&lt;li&gt;For my secondary backup, I have a 2TB Seagate Backup Plus external HDD that I use rclone to mirror my Onedrive to.&lt;/li&gt;&#xA;&lt;li&gt;But until now, I didn&amp;rsquo;t have a third backup option. I wanted something cheap.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;why-azure-blob-storage&#34;&gt;Why Azure blob storage?&lt;/h3&gt;&#xA;&lt;p&gt;After evaluating various options, I decided to go with Azure blob storage, on the Archive tier. For anyone hoping to replicate this, it&amp;rsquo;s important to know that Azure blob storage archive tier is meant as Archival storage, meaning it should be option #3 in a &lt;a href=&#34;https://www.backblaze.com/blog/the-3-2-1-backup-strategy/&#34;&gt;3-2-1 backup strategy&lt;/a&gt;. It&amp;rsquo;s not meant as a backup, which would be the role of the 2TB HDD in my case.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>How I Built a Telegram Summarization Bot</title>
       <link>https://thomastay.dev/blog/how-i-built-a-telegram-summarization-bot/</link>
@@ -21,6 +42,13 @@
       <pubDate>Fri, 01 Dec 2023 03:00:59 -0700</pubDate>
       <guid>https://thomastay.dev/blog/decompressing_gzip_2/</guid>
       <description>&lt;p&gt;&lt;em&gt;Part 1 here:&lt;/em&gt; &lt;a href=&#34;https://thomastay.dev/blog/blog/gzip_investigations&#34;&gt;Link to part 1&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Let&amp;rsquo;s decompress a gzip file by hand, just &lt;a href=&#34;https://thomastay.dev/blog/blog/gzip_investigations&#34;&gt;like we did last time in part 1&lt;/a&gt;, but this time let&amp;rsquo;s decode the decompressed huffman codes too.&lt;/p&gt;&#xA;&lt;p&gt;Start by writing some data to disk:&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;$ echo &amp;#34;hector the frantic father on an anchor or a rare fat cat sat on the ranch&amp;#34; &amp;gt; test-huff.txt&#xA;$ xxd test-huff.txt&#xA;00000000: 6865 6374 6f72 2074 6865 2066 7261 6e74  hector the frant&#xA;00000010: 6963 2066 6174 6865 7220 6f6e 2061 6e20  ic father on an&#xA;00000020: 616e 6368 6f72 206f 7220 6120 7261 7265  anchor or a rare&#xA;00000030: 2066 6174 2063 6174 2073 6174 206f 6e20   fat cat sat on&#xA;00000040: 7468 6520 7261 6e63 680a                 the ranch.&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Our file is 74 bytes this time, and specifically chosen to use only 13 characters:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Value investing analysis: Kellogg (KLG) 2023</title>
+      <link>https://thomastay.dev/blog/value-investing-kellogg-2023/</link>
+      <pubDate>Sun, 12 Nov 2023 12:36:35 -0800</pubDate>
+      <guid>https://thomastay.dev/blog/value-investing-kellogg-2023/</guid>
+      <description>&lt;h1 id=&#34;summary&#34;&gt;Summary&lt;/h1&gt;&#xA;&lt;p&gt;Kellogg (KLG) is a recent spinoff of the North American cereal business from the larger parent Kellanova (K). I believe that Kellogg has great investment potential as a classic Greenblatt spinoff play. It experienced indiscriminate selling, is trading close to dividend value, and has a potential for 30% returns.&lt;/p&gt;&#xA;&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;&#xA;&lt;p&gt;On Oct 2 2023 [1], Kellogg separated into its own company. This is part of a broader move by the parent company to split up Kellogg into cereal and snacks. Kellanova, now the name of the parent company, believes that snacks are the faster growing part of the business, and cereal is the boring but blue chip part of the business. So to me, the rationale for the split was to allow the snacks company to trade at higher multiples like consumer discretionary; and for Kellogg to trade more like a consumer defensive.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Domain Moved</title>
@@ -49,6 +77,13 @@
       <pubDate>Sun, 30 Jan 2022 19:31:48 +0800</pubDate>
       <guid>https://thomastay.dev/blog/100-reliable-and-fast/</guid>
       <description>&lt;p&gt;I work on a front end project which has two Git repositories, three completely different build systems, five languages, over 10,000 files and 10 million lines of code. It&amp;rsquo;s been built over six years, with the effort over at least a thousand engineers. At this scale, IDE&amp;rsquo;s just can&amp;rsquo;t work effectively.&lt;/p&gt;&#xA;&lt;p&gt;For instance, Jump to Definition (F12 in vscode) mostly works, except when navigating to a concrete implementation of an interface injected ten files away. Hover-over type declarations mostly works, except when the Typescript server can&amp;rsquo;t resolve a particular namespace because some legacy code fiddled with webpack magic. Automatic renaming within files mostly works, except when someone used the same variable name in a deeply nested closure and Typescript can&amp;rsquo;t infer that because there isn&amp;rsquo;t enough type information to go on. And let&amp;rsquo;s not even talk about renaming across files. You&amp;rsquo;d be better off winning the powerball [1].&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>How this blog is made</title>
+      <link>https://thomastay.dev/blog/how-i-keep-this-blog-small/</link>
+      <pubDate>Wed, 05 Jan 2022 01:04:48 -0800</pubDate>
+      <guid>https://thomastay.dev/blog/how-i-keep-this-blog-small/</guid>
+      <description>&lt;p&gt;TODO: this intro sounds bad&lt;/p&gt;&#xA;&lt;p&gt;I started this blog last year, and though I&amp;rsquo;ve written a few pieces, I&amp;rsquo;ve ensured that they all score a 100% on Lighthouse.&lt;/p&gt;&#xA;&lt;p&gt;While there isn&amp;rsquo;t any particularly fancy trick I use to make the page small (I literally just don&amp;rsquo;t do a lot of stuff), I figure it is at least worth writing down. At the very least, it&amp;rsquo;ll help me restart everything from scratch if need be.&lt;/p&gt;</description>
     </item>
     <item>
       <title>A Computer&#39;s no</title>

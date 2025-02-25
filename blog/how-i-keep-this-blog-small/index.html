@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.139.2">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Thomas" />
+  <meta property="og:url" content="https://thomastay.dev/blog/how-i-keep-this-blog-small/" />
+  <link rel="canonical" href="https://thomastay.dev/blog/how-i-keep-this-blog-small/" /><link rel="apple-touch-icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="icon" href="/assets/img/favicon-32x32.png" />
+  <link rel="shortcut" href="/assets/img/favicon-32x32.png" /><link rel="alternate" type="application/atom+xml" href="https://thomastay.dev/blog/index.xml" title="Thomas Tay&#39;s blog">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/thomastay.dev\/blog\/"
+      },
+      "articleSection" : "",
+      "name" : "How this blog is made",
+      "headline" : "How this blog is made",
+      "description" : "\u003cp\u003eTODO: this intro sounds bad\u003c\/p\u003e\n\u003cp\u003eI started this blog last year, and though I\u0026rsquo;ve written a few pieces, I\u0026rsquo;ve ensured that they all score a 100% on Lighthouse.\u003c\/p\u003e\n\u003cp\u003eWhile there isn\u0026rsquo;t any particularly fancy trick I use to make the page small (I literally just don\u0026rsquo;t do a lot of stuff), I figure it is at least worth writing down. At the very least, it\u0026rsquo;ll help me restart everything from scratch if need be.\u003c\/p\u003e",
+      "inLanguage" : "en-US",
+      "author" : "Thomas",
+      "creator" : "Thomas",
+      "publisher": "Thomas",
+      "accountablePerson" : "Thomas",
+      "copyrightHolder" : "Thomas",
+      "copyrightYear" : "2022",
+      "datePublished": "2022-01-05 01:04:48 -0800 PST",
+      "dateModified" : "2022-01-05 01:04:48 -0800 PST",
+      "url" : "https:\/\/thomastay.dev\/blog\/how-i-keep-this-blog-small\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>How this blog is made - Thomas Tay&#39;s blog</title>
+  <meta property="og:title" content="How this blog is made - Thomas Tay&#39;s blog" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="TODO: this intro sounds bad
+I started this blog last year, and though I&rsquo;ve written a few pieces, I&rsquo;ve ensured that they all score a 100% on Lighthouse.
+While there isn&rsquo;t any particularly fancy trick I use to make the page small (I literally just don&rsquo;t do a lot of stuff), I figure it is at least worth writing down. At the very least, it&rsquo;ll help me restart everything from scratch if need be." />
+  <meta name="description" content="TODO: this intro sounds bad
+I started this blog last year, and though I&rsquo;ve written a few pieces, I&rsquo;ve ensured that they all score a 100% on Lighthouse.
+While there isn&rsquo;t any particularly fancy trick I use to make the page small (I literally just don&rsquo;t do a lot of stuff), I figure it is at least worth writing down. At the very least, it&rsquo;ll help me restart everything from scratch if need be." />
+  <meta property="og:locale" content="en-us" />
+
+
+  <link rel="stylesheet" href="/blog/css/flexboxgrid-6.3.1.min.css"><link rel="stylesheet" href="/blog/css/github-markdown.min.css">
+  <link rel="stylesheet" href="/blog/css/index.min.css">
+  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml"
+    title="Thomas Tay&#39;s blog">
+  
+  
+  
+  
+
+  
+</head>
+
+
+<body>
+  <article class="post " id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="signatures site-title">
+    <a href="/blog/">Thomas&#39; weblog</a>
+  </div>
+</header>
+<div class="row end-xs">
+  
+  
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">How this blog is made</h1>
+          <div class="row post-desc">
+            <div class="col-xs-6">
+              
+              <time class="post-date" datetime="2022-01-05 01:04:48 PST">
+                05 Jan 2022
+              </time>
+              
+            </div>
+            <div class="col-xs-6">
+              
+              <div class="post-author">
+                <a target="_blank" href="https://thomastay.dev/">@Thomas</a>
+              </div>
+              
+            </div>
+          </div>
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <p>TODO: this intro sounds bad</p>
+<p>I started this blog last year, and though I&rsquo;ve written a few pieces, I&rsquo;ve ensured that they all score a 100% on Lighthouse.</p>
+<p>While there isn&rsquo;t any particularly fancy trick I use to make the page small (I literally just don&rsquo;t do a lot of stuff), I figure it is at least worth writing down. At the very least, it&rsquo;ll help me restart everything from scratch if need be.</p>
+<h1 id="build-system">Build system</h1>
+<p>First and foremost in every blog is the build system (aka CMS, aka static site generator). For some, their CMS is HTML and CSS. I don&rsquo;t know about you, but I don&rsquo;t enjoy writing HTML tags so I use <a href="https://gohugo.io">Hugo</a>. It lets me write markdown which is more or less like plain text.</p>
+<p>That&rsquo;s basically all I use Hugo for, I don&rsquo;t use any of its fancy features. The main reason why I use Hugo and not some other CMS is because it&rsquo;s fast and it supports Windows out of the box.</p>
+<p>Here&rsquo;s the hugo version used to generate this blog post. It&rsquo;ll probably change by the time you read it, I try to keep abreast with Hugo updates.</p>
+<pre tabindex="0"><code>~\D\blog&gt; hugo version
+hugo v0.91.2-1798BD3F windows/amd64 BuildDate=2021-12-23T15:33:34Z VendorInfo=gohugoio
+</code></pre><p>To keep up with software updates, I use Scoop as my package manager to manage my Hugo builds. Although Hugo subscribes to the 0-ver scheme, it is remarkably stable and I think upgrading only broke my builds once, very early on.</p>
+<h1 id="editor">Editor</h1>
+<p>I use <a href="https://neovim.io/">Neovim</a> to write blog posts. As I mentioned, I really just want to write into a txt file, but markdown lets me have titles, links and code snippets, so I use markdown but basically treat it as plain text.</p>
+<p>I make quite extensive use of Neovim, and I&rsquo;ll address it in another post, but suffice to say that <a href="https://neovim.io/charter/">Neovim has improved</a> <a href="https://benfrain.com/neovim-0-5-lua-built-in-lsp-treesitter-and-the-best-plugins-for-2021/">leaps and bounds</a> from just a <a href="https://toroid.org/modern-neovim">fork of Vim</a>.</p>
+<h1 id="theme">Theme</h1>
+<h2 id="where-it-comes-from">Where it comes from</h2>
+<p>Credits first: I owe my theme entirely to <a href="https://github.com/joway/hugo-theme-yinyang">Joway Wang</a>. His theme was exactly what I was looking for when I was looking for a blog theme, and though I run a custom fork of his theme, you should use his if you want a blog theme.</p>
+<p>There are so many features of Joway&rsquo;s theme that make this blog look polished that I can&rsquo;t list them all, but here are some nice ones:</p>
+<ol>
+<li>Hovering over a link makes the font bigger</li>
+<li>Clicking on &ldquo;Thomas&rsquo; Weblog&rdquo; takes you back to the blog main page</li>
+<li>SEO optimization</li>
+</ol>
+<p>When I was shopping for a theme, I specifically looked for themes that would look like the <a href="https://fabiensanglard.net/doom_fire_psx/index.html">Light Theme of Fabien Sanglard</a>. I really like his blog theme and wanted to copy it, minus the monospaced text (makes text hard to read).</p>
+<p>That said, I did make some tweaks:</p>
+<ol>
+<li>Changed the font-family to only use system fonts and removed dependency on Google fonts - speeds up page load</li>
+<li>Removed the ability to switch between languages (I only write in English)</li>
+<li>Removed dependence on highlight.js - An explicit goal of this blog was to have absolutely 0 bytes of Javascript unless the blog post requires some animations.</li>
+<li>Broke up the CSS bundle into three bundles (explained more in the Performance section)</li>
+</ol>
+<h2 id="where-it-will-go">Where it will go</h2>
+<p>The only downside of my current setup is that it doesn&rsquo;t support Dark mode as of yet. Perhaps Joway has fixed that, but I haven&rsquo;t really kept up to date with his changes.</p>
+<p>Another thing that would probably be nice is something like what <a href="https://www.nayuki.io/page/about#contact">Nayuki does when you click on a section header</a>, which is to highlight the section using the (unknown to me!) CSS target selection feature.</p>
+<p>Something which I won&rsquo;t implement, but is quite the visual delight, is Amos&rsquo; &ldquo;Cool bear&rsquo;s hot tip&rdquo; (fasterthanli.me). <a href="https://fasterthanli.me/articles/why-is-my-rust-build-so-slow">Check out his blog post on Rust build profiling</a> to see what it looks like.</p>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+
+        
+
+        <div class="site-footer">
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev/blog" target="_blank">More articles</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://thomastay.dev" target="_blank">Homepage</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay" target="_blank">Github</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://linkedin.com/in/thomastayac" target="_blank">Linkedin</a>
+  </div>
+  
+  <div class="site-footer-item">
+    <a href="https://github.com/thomastay/hugo-theme-yinyang" target="_blank">Theme</a>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+
+<script>
+  
+  
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>
